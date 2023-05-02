@@ -34,3 +34,7 @@
     transform: rotate(360deg);
   }
 }
+
+.MuiFormHelperText-root {
+  color: #be2e2e !important;
+}
