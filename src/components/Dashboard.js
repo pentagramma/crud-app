@@ -34,7 +34,7 @@ const Dashboard = () => {
         }}
       >
         <Box p={2} width={"550px"} role="presentaition">
-          {resetAI && <Chatbot />}
+          {resetAI && <Chatbot/>}
         </Box>
       </Drawer>
       <Navbar />

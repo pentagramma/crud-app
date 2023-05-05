@@ -28,7 +28,7 @@ const LoginPage = () => {
   });
   const [err, setErr] = useState(false);
   const [errorVal, setErrorVal] = useState("");
-  const [severity, setSeverity] = useState("");
+  const [severity, setSeverity] = useState("error");
   const location = useLocation();
   useEffect(() => {
     if (location.state) {
@@ -52,8 +52,9 @@ const LoginPage = () => {
     if (Object.keys(validationResult).length > 0) {
       setHelperText({ ...validationResult });
     } else {
-      axios
-        .get(`${base_url}/api/v1/login`, {
+      try{
+        axios
+        .get(`${base_url}/api/v1/user/login`, {
           params: formData,
         })
         .then((response) => {
@@ -68,6 +69,10 @@ const LoginPage = () => {
           setErrorVal(error.response.data.message);
           setSeverity("error")
         });
+      }
+      catch(e){
+        console.log(e.message)
+      }
     }
   };
   return (

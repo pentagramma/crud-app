@@ -15,12 +15,12 @@ import { Alert } from "@mui/material";
 import { checkFormData } from "../utils/signupValidation";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {base_url} from '../utils/base_url'
+import { base_url } from "../utils/base_url";
 
 const theme = createTheme();
 
 export default function SignUp() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -33,8 +33,8 @@ export default function SignUp() {
     email: "",
     password: "",
   });
-  const [err,setErr] = useState(false)
-  const [errorVal,setErrorVal] = useState("")
+  const [err, setErr] = useState(false);
+  const [errorVal, setErrorVal] = useState("");
   const handleSubmit = async (event) => {
     event.preventDefault();
     setHelperText({
@@ -43,26 +43,27 @@ export default function SignUp() {
       email: "",
       password: "",
     });
-    setErr(false)
-    const validationResult = checkFormData(formData)
-    if(Object.keys(validationResult).length>0){
-      setHelperText({...validationResult})
-    }
-    else{
-      axios.post(`${base_url}/api/v1/signup`,formData).then((response)=>{
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          password: "",
+    setErr(false);
+    const validationResult = checkFormData(formData);
+    if (Object.keys(validationResult).length > 0) {
+      setHelperText({ ...validationResult });
+    } else {
+      axios
+        .post(`${base_url}/api/v1/user/signup`, formData)
+        .then((response) => {
+          setFormData({
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+          });
+          navigate("/login", { state: true, replace: true });
         })
-        navigate('/login',{state:true,replace:true})
-      }).catch((error)=>{
-        setErr(true)
-        setErrorVal(error.response.data.message)
-      })
+        .catch((error) => {
+          setErr(true);
+          setErrorVal(error.response.data.message);
+        });
     }
-
   };
 
   const inputChangeHandler = (e) => {
@@ -81,12 +82,21 @@ export default function SignUp() {
             alignItems: "center",
           }}
         >
-          <Box sx={{
-            height:'4vw'
-          }}>
-          {err && <Alert severity="error" onClose={() => {setErr(false)}}>
-            {errorVal}
-          </Alert>}
+          <Box
+            sx={{
+              height: "4vw",
+            }}
+          >
+            {err && (
+              <Alert
+                severity="error"
+                onClose={() => {
+                  setErr(false);
+                }}
+              >
+                {errorVal}
+              </Alert>
+            )}
           </Box>
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
