@@ -43,6 +43,8 @@ const Navbar = () => {
     handleClose()
     Cookies.remove('token')
     Cookies.remove('refresh-token')
+    Cookies.remove('status')
+    Cookies.remove('user-data')
     navigate('/login',{replace:true})
   }
   const Search = styled("div")(({ theme }) => ({
