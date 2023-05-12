@@ -15,6 +15,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { checkFormData } from "../utils/loginValidation";
 import axios from "axios";
 import { base_url } from "../utils/base_url";
+import Cookies from "js-cookie";
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -54,14 +55,21 @@ const LoginPage = () => {
     } else {
       try{
         axios
-        .get(`${base_url}/api/v1/user/login`, {
-          params: formData,
-        })
+        .post(`${base_url}/api/v1/user/login`, formData)
         .then((response) => {
           setFormData({
             email: "",
             password: "",
           })
+          Cookies.set('token',response.data.token)
+          Cookies.set('refresh-token',response.data.refresh_token)
+          let obj = {
+            _id: response.data._id,
+            email:response.data.email,
+            firstName: response.data.firstName
+          }
+          Cookies.set('user-data',JSON.stringify(obj))
+          Cookies.set('status','Y')
           navigate('/',{replace:true})
         })
         .catch((error) => {

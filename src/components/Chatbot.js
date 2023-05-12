@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import ChatBot from "react-simple-chatbot";
@@ -31,9 +31,15 @@ const Chatbot = () => {
     {
       id: "4",
       component: <AIResult />,
+      asMessage:true,
       waitAction: true,
-      trigger: "3",
+      trigger: "5",
     },
+    {
+        id:'5',
+        message: 'anything else?',
+        trigger:'search'
+    }
   ];
   return (
     <>
@@ -58,17 +64,21 @@ const AIResult = ({ steps, triggerNextStep }) => {
       axios
         .get(`${base_url}/api/v1/chatbot/${steps.search.value}`)
         .then((response) => {
+            console.log(response.data.message)
           setLoading(false);
           setAnswer(response.data.message);
+          triggerNextStep();
         })
         .catch((error) => {
+          setLoading(false);
           setAnswer("Server issue. Try again.");
-          console.log(error.message);
+          console.error(error);
+          triggerNextStep();
         });
     } catch (e) {
       console.log(e.message);
     }
-  },[]);
+  }, []);
   return (
     <>
       {loading ? (
@@ -76,22 +86,9 @@ const AIResult = ({ steps, triggerNextStep }) => {
           <img src={LoadingImage} alt="loading-data" />
         </Box>
       ) : (
-        <div style={{
-            display:'flex',
-            flexDirection:'column',
-            justifyContent:'flex-start',
-            alignItems:'flex-start'
-        }}>
+        <>
           <Typography>{answer}</Typography>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              triggerNextStep();
-            }}
-          >
-            Ask Again
-          </Button>
-        </div>
+        </>
       )}
     </>
   );
