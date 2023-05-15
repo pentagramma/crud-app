@@ -99,7 +99,7 @@ const Navbar = () => {
         </Box>
       </Drawer>
       <Modal open={isModalOpen} onClose={()=>{setIsModalOpen(false)}}>
-        <ModalView/>
+        <ModalView setIsModalOpen={setIsModalOpen}/>
       </Modal>
       <Toolbar>
         <IconButton size="large" edge="start" color="inherit" aria-label="logo">
