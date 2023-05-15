@@ -1,8 +1,13 @@
 import { Avatar, Box, Divider, Typography } from '@mui/material';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchQuestions } from '../redux/Questions/questionsActions';
+import QuestionLoader from '../utils/questionLoader';
+import axios from 'axios';
+import { base_url } from '../utils/base_url';
 
 let arr = [
     {
@@ -12,7 +17,8 @@ let arr = [
       id: 1,
       ans_count: '4',
       likes: 56,
-      timeStamp: '4 hours'
+      timeStamp: '4 hours',
+      category: 'technology'
     },
     {
       question: "how are you?",
@@ -21,13 +27,28 @@ let arr = [
       name: 'Bharat',
       ans_count: '5',
       likes: 56,
-      timeStamp: '1 day'
+      timeStamp: '1 day',
+      category: 'business'
     },
   ];
 const QuestionList = () => {
+    const questionArray = useSelector(state => state.questions)
+    const dispatch = useDispatch()
+    const [loader,setLoader] = useState(false)
+
+    useEffect(()=>{
+        setLoader(true)
+        axios.get(``)
+        .then((response)=>{
+            dispatch(fetchQuestions(response.data))
+            setLoader(false)
+        })
+        .catch()
+    },[])
+
   return (
     <>
-      {arr.map((each) => {
+      {loader?<QuestionLoader/> : questionArray.map((each) => {
           return (
             <Box key={each.id} sx={{
                 width:'50vw',
