@@ -8,20 +8,18 @@ import jwt_decode from "jwt-decode";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { base_url } from "./utils/base_url";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 axios.interceptors.request.use(
   async (request) => {
     if (!Cookies.get("token")) {
       return request;
     }
-    const navigate = useNavigate()
     request.headers["token"] = Cookies.get("token");
     request.headers["refresh-token"] = Cookies.get("refresh-token");
     const { exp } = jwt_decode(Cookies.get("token"));
     const expDate = new Date(parseInt(exp) * 1000);
     const currentDate = new Date();
-    console.log(currentDate, expDate);
     if (currentDate > expDate && Cookies.get("status") == "Y") {
       Cookies.set("status", "N");
       try {
@@ -33,7 +31,7 @@ axios.interceptors.request.use(
         request.headers["refresh-token"] = Cookies.get("refresh-token");
       } catch (err) {
         console.log("refreshtoken error", err);
-        navigate('/login',{replace:true})
+        <Navigate to={'/login'}/>
       }
     }
     return request;

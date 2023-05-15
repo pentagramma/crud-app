@@ -29,6 +29,7 @@ const Dashboard = () => {
             <MenuItem value={"Technology"}>Technology</MenuItem>
             <MenuItem value={"Business"}>Business</MenuItem>
             <MenuItem value={"Philosophy"}>Philosophy</MenuItem>
+            <MenuItem value={"Other"}>Other</MenuItem>
           </TextField>
         </Box>
       </Box>
@@ -41,7 +42,7 @@ const Dashboard = () => {
           },
           display:'flex',
           flexDirection:'column',
-          marginLeft:'20vw'
+          marginLeft:'25vw'
         }}
       >
         <QuestionList />

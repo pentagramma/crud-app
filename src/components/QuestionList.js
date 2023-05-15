@@ -5,52 +5,31 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchQuestions } from '../redux/Questions/questionsActions';
-import QuestionLoader from '../utils/questionLoader';
+import QuestionLoader from '../utils/QuestionLoader';
 import axios from 'axios';
 import { base_url } from '../utils/base_url';
 
-let arr = [
-    {
-      question: "how are you? what is you name? how many fishes? how do you define dgsdgsd dsggsdgsdgs dsgsdgsdgsd sdgsdgsdgsdg",
-      gpt_answer: "I'm good sfabfasfb asjfbkafs kjabsfabfkba jaksbfkajsbfkabf jkasjbfkajsbfkajbf jasbfkjabkfajb",
-      name:"Hema",
-      id: 1,
-      ans_count: '4',
-      likes: 56,
-      timeStamp: '4 hours',
-      category: 'technology'
-    },
-    {
-      question: "how are you?",
-      gpt_answer: "I'm good",
-      id: 2,
-      name: 'Bharat',
-      ans_count: '5',
-      likes: 56,
-      timeStamp: '1 day',
-      category: 'business'
-    },
-  ];
 const QuestionList = () => {
-    const questionArray = useSelector(state => state.questions)
+    const questionArray = useSelector(state => state.questions.questionArray)
     const dispatch = useDispatch()
     const [loader,setLoader] = useState(false)
 
     useEffect(()=>{
         setLoader(true)
-        axios.get(``)
+        axios.get(`${base_url}/api/v1/questions?skip=${1}&limit=10`)
         .then((response)=>{
-            dispatch(fetchQuestions(response.data))
+            dispatch(fetchQuestions(response.data.questions))
             setLoader(false)
+        }).catch(e=>{
+            console.log(e)
         })
-        .catch()
     },[])
 
   return (
     <>
       {loader?<QuestionLoader/> : questionArray.map((each) => {
           return (
-            <Box key={each.id} sx={{
+            <Box key={each._id} sx={{
                 width:'50vw',
                 height:'150px',
                 backgroundColor:'white',
@@ -69,7 +48,7 @@ const QuestionList = () => {
                 }}>
                     <Avatar sx={{
                         cursor:'pointer'
-                    }}>{each.name.slice(0,1)}</Avatar>
+                    }}>{each.postedBy.firstName.slice(0,1)}</Avatar>
                 </Box>
                 <Divider orientation='vertical'/>
                 <Box sx={{
@@ -88,7 +67,8 @@ const QuestionList = () => {
                         WebkitBoxOrient: 'vertical',
                         cursor:'pointer',
                         '&:hover':{
-                            color:'#9c27b0'
+                            color:'#9c27b0',
+                            textDecoration:'underline'
                         }
                     }} variant={'h5'}>{each.question}</Typography>
                     <Typography sx={{
@@ -133,7 +113,7 @@ const QuestionList = () => {
                         <Typography gutterBottom sx={{
                             marginLeft:'10px',
                             fontSize:'12px'
-                        }}>{each.timeStamp}</Typography>
+                        }}>{}</Typography>
                     </Box>
                 </Box>
             </Box>
