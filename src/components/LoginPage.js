@@ -63,12 +63,6 @@ const LoginPage = () => {
           })
           Cookies.set('token',response.data.token)
           Cookies.set('refresh-token',response.data.refresh_token)
-          let obj = {
-            _id: response.data._id,
-            email:response.data.email,
-            firstName: response.data.firstName
-          }
-          Cookies.set('user-data',JSON.stringify(obj))
           Cookies.set('status','Y')
           navigate('/',{replace:true})
         })
