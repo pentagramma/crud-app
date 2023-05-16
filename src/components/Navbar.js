@@ -38,6 +38,7 @@ const Navbar = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+    navigate('/profile');
   };
   const handleLogout = ()=>{
     handleClose()

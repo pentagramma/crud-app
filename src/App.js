@@ -9,6 +9,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { base_url } from "./utils/base_url";
 import { Navigate } from "react-router-dom";
+import Profile from "./Pages/Profile";
 
 axios.interceptors.request.use(
   async (request) => {
@@ -31,7 +32,7 @@ axios.interceptors.request.use(
         request.headers["refresh-token"] = Cookies.get("refresh-token");
       } catch (err) {
         console.log("refreshtoken error", err);
-        <Navigate to={'/login'}/>
+        <Navigate to={"/login"} />;
       }
     }
     return request;
@@ -46,6 +47,15 @@ function App() {
   return (
     <>
       <Routes>
+        <Route
+          exact
+          path="/profile"
+          element={
+            <LoginAuth>
+              <Profile />
+            </LoginAuth>
+          }
+        />
         <Route
           exact
           path="/"
