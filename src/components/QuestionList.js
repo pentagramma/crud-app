@@ -48,7 +48,8 @@ const QuestionList = () => {
                     alignItems:'center'
                 }}>
                     <Avatar sx={{
-                        cursor:'pointer'
+                        cursor:'pointer',
+                        backgroundColor:'#9c27b0'
                     }}>{each.postedBy.firstName.slice(0,1)}</Avatar>
                 </Box>
                 <Divider orientation='vertical'/>

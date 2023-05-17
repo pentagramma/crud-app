@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 import { base_url } from "./utils/base_url";
 import { Navigate } from "react-router-dom";
 import Profile from "./Pages/Profile";
-import Footer from "./components/Footer";
+import EachQuestionPage from "./Pages/EachQuestionPage";
 
 axios.interceptors.request.use(
   async (request) => {
@@ -68,6 +68,7 @@ function App() {
         />
         <Route exact path="/login" element={<LoginPage />} />
         <Route exact path="/signup" element={<SignUp />} />
+        <Route exact path="/each-question" element={<EachQuestionPage/>}/>
       </Routes>
       <Footer/>
     </>

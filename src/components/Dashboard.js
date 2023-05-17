@@ -3,6 +3,7 @@ import { useState } from "react";
 import Navbar from "./Navbar";
 import { Box, TextField, MenuItem } from "@mui/material";
 import QuestionList from "./QuestionList";
+import { width } from "@mui/system";
 
 const Dashboard = () => {
   return (
@@ -12,7 +13,8 @@ const Dashboard = () => {
         bottom: "0",
         top: "0",
         position: "absolute",
-        overflow:'hidden'
+        overflow:'hidden',
+        width:'100vw'
       }}
     >
       <Navbar />
