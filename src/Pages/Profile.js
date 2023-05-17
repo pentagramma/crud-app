@@ -17,16 +17,23 @@ import { base_url } from "../utils/base_url";
 import UserInfo from "../components/UserInfo";
 import UserQuestions from "../components/UserQuestions";
 import UserAnswers from "../components/UserAnswers";
-import Navbar from "../components/Navbar"
+import Navbar from "../components/Navbar";
 
 const Profile = () => {
   const [questions, setQuestions] = useState([]);
-  const [user,setUser]=useState();
+  const [user, setUser] = useState();
   const [section, setSection] = useState("profile");
-  useEffect(async()=>{
-    const response = await axios.get(`${base_url}/api/v1/user/profile`);
-    setUser(response.data.user)
-  },[])
+  useEffect(() => {
+    fetchUser();
+  }, []);
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get(`${base_url}/api/v1/user/profile`);
+      setUser(response.data.user);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const handleMyQuestionsClick = async (email) => {
     setSection("questions");
     try {
@@ -36,7 +43,7 @@ const Profile = () => {
           userId: user._id,
         },
       });
-    
+
       console.log(response.data);
       setQuestions(response.data.questions);
     } catch (error) {
@@ -83,7 +90,7 @@ const Profile = () => {
       </Grid>
       <Grid item xs={9}>
         {section === "profile" ? (
-          <UserInfo user={user}/>
+          <UserInfo user={user} />
         ) : section === "questions" ? (
           <UserQuestions />
         ) : (

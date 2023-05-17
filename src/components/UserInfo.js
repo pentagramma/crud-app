@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Box,
@@ -85,7 +85,7 @@ function UserInfo({ user }) {
                     <PhotoCameraIcon />
                   </IconButton>
                 </label>
-                <Typography variant="h6">Username</Typography>
+                <Typography variant="h6">{user?.firstName+" "+user?.lastName}</Typography>
                 <Typography variant="subtitle1">{email}</Typography>
                 <Typography variant="subtitle1">
                   Number of Questions: 10

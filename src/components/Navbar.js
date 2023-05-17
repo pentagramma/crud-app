@@ -106,7 +106,7 @@ const Navbar = () => {
         <ModalView setIsModalOpen={setIsModalOpen}/>
       </Modal>
       <Toolbar>
-        <IconButton size="large" edge="start" color="inherit" aria-label="logo">
+        <IconButton size="large" edge="start" onClick={()=>navigate('/')} color="inherit" aria-label="logo">
           <DynamicFormIcon />
         </IconButton>
         <Typography variant="h6" component="div" width={"10vw"}>
