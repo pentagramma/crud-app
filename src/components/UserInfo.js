@@ -1,22 +1,44 @@
-import React, { useState } from 'react';
-import { Grid, Box, Paper, Typography, TextField, Button, Avatar, IconButton } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import React, { useState } from "react";
+import {
+  Grid,
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Avatar,
+  IconButton,
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import axios from "axios";
+import { base_url } from "../utils/base_url";
 
 function UserInfo({ user }) {
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [designation, setDesignation] = useState("");
   const [profilePicture, setProfilePicture] = useState("profile-picture.jpg");
 
-  const handleUpdate = () => {
-    // Perform update logic here
-    // You can send the updated data to the server or update the state as needed
-    console.log("Updated");
+  const handleUpdate = async () => {
+    const userdata = {
+      firstName: firstName != "" ? firstName : user.firstName,
+      lastName: lastName != "" ? lastName : user.lastName,
+      email: email != "" ? email : user.email,
+      password: user.password,
+      companyName: companyName,
+      designation: designation,
+      imageUrl: profilePicture,
+    };
+    console.log(userdata);
+    const response = await axios.put(
+      `${base_url}/api/v1/user/update/${user._id}`,
+      userdata
+    );
+    console.log(response.data);
+    console.log(profilePicture);
   };
 
   const handleProfilePictureChange = (e) => {
@@ -106,15 +128,7 @@ function UserInfo({ user }) {
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        label="Password"
-                        type="password"
-                        fullWidth
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </Grid>
+
                     <Grid item xs={12}>
                       <TextField
                         label="Company Name"
@@ -153,32 +167,29 @@ function UserInfo({ user }) {
 
 export default UserInfo;
 
+// <Box p={2}>
+//   <Grid container spacing={2}>
+//     <Grid item>
+//       <Avatar
+//         src="/path/to/profile-photo.jpg"
+//         alt="Profile Photo"
+//         sx={{ width: 150, height: 150 }}
+//       />
+//     </Grid>
+//     <Grid item>
+//       <Typography variant="h4">John Doe</Typography>
+//       <Typography variant="subtitle1">john.doe@example.com</Typography>
 
-
-
-  // <Box p={2}>
-  //   <Grid container spacing={2}>
-  //     <Grid item>
-  //       <Avatar
-  //         src="/path/to/profile-photo.jpg"
-  //         alt="Profile Photo"
-  //         sx={{ width: 150, height: 150 }}
-  //       />
-  //     </Grid>
-  //     <Grid item>
-  //       <Typography variant="h4">John Doe</Typography>
-  //       <Typography variant="subtitle1">john.doe@example.com</Typography>
-
-  //       {/* User Info Form */}
-  //       <form>
-  //         <TextField label="Name" fullWidth />
-  //         <TextField label="Email" fullWidth />
-  //         <TextField label="Profile Photo URL" fullWidth />
-  //         <TextField label="City" fullWidth />
-  //         <Button variant="contained" color="primary" type="submit">
-  //           Save
-  //         </Button>
-  //       </form>
-  //     </Grid>
-  //   </Grid>
-  // </Box>
+//       {/* User Info Form */}
+//       <form>
+//         <TextField label="Name" fullWidth />
+//         <TextField label="Email" fullWidth />
+//         <TextField label="Profile Photo URL" fullWidth />
+//         <TextField label="City" fullWidth />
+//         <Button variant="contained" color="primary" type="submit">
+//           Save
+//         </Button>
+//       </form>
+//     </Grid>
+//   </Grid>
+// </Box>
