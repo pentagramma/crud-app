@@ -1,22 +1,50 @@
-import React, { useState } from 'react';
-import { Grid, Box, Paper, Typography, TextField, Button, Avatar, IconButton } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import React, { useEffect, useState } from "react";
+import {
+  Grid,
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+  Avatar,
+  IconButton,
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import axios from "axios";
+import { base_url } from "../utils/base_url";
 
 function UserInfo({ user }) {
-
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [designation, setDesignation] = useState("");
+  const [newUser, setNewUser] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    companyName: user?.companyName || "",
+    designation: user?.designation || "",
+    imageUrl: user?.profilePicture || "",
+  });
+  const [tempUser, setTempUser] = useState();
   const [profilePicture, setProfilePicture] = useState("profile-picture.jpg");
 
-  const handleUpdate = () => {
-    // Perform update logic here
-    // You can send the updated data to the server or update the state as needed
-    console.log("Updated");
+  const handleUpdate = async () => {
+    setTempUser(newUser);
+
+    console.log(newUser);
+    const response = await axios.put(
+      `${base_url}/api/v1/user/update/${user._id}`,
+      newUser
+    );
+
+    setNewUser({
+      firstName: tempUser.firstName || "",
+      lastName: tempUser.lastName || "",
+      email: tempUser.email || "",
+      companyName: tempUser.companyName || "",
+      designation: tempUser.designation || "",
+      imageUrl: tempUser.imageUrl || "",
+    });
+    console.log(response.data);
+    console.log(profilePicture);
   };
 
   const handleProfilePictureChange = (e) => {
@@ -24,11 +52,14 @@ function UserInfo({ user }) {
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      setProfilePicture(e.target.result);
+      setNewUser({ ...newUser, imageUrl: e.target.result });
+      // setProfilePicture(e.target.result);
     };
 
     reader.readAsDataURL(file);
   };
+
+  useEffect(() => console.log(user), []);
 
   const theme = createTheme();
 
@@ -63,10 +94,15 @@ function UserInfo({ user }) {
                     <PhotoCameraIcon />
                   </IconButton>
                 </label>
-                <Typography variant="h6">Username</Typography>
-                <Typography variant="subtitle1">{email}</Typography>
+                <Typography variant="h6">
+                  {user?.firstName?.charAt(0).toUpperCase()}
+                  {user?.firstName?.slice(1)}{" "}
+                  {user?.lastName?.charAt(0).toUpperCase()}
+                  {user?.lastName?.slice(1)}
+                </Typography>
+                <Typography variant="subtitle1">{user?.email}</Typography>
                 <Typography variant="subtitle1">
-                  Number of Questions: 10
+                  Number of Questions posted:
                 </Typography>
                 <Typography variant="subtitle1">
                   Number of Answers: 5
@@ -78,57 +114,70 @@ function UserInfo({ user }) {
             <Paper>
               <Box p={2}>
                 <Typography variant="h6" gutterBottom>
-                  Update Details
+                  Update Your Details
                 </Typography>
                 <form>
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
+                        placeholder="First Name"
                         label="First Name"
                         fullWidth
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
+                        value={newUser.firstName}
+                        onChange={(e) =>
+                          setNewUser({ ...newUser, firstName: e.target.value })
+                        }
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextField
+                        placeholder="Last Name"
                         label="Last Name"
                         fullWidth
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
+                        value={newUser.lastName}
+                        onChange={(e) =>
+                          setNewUser({ ...newUser, lastName: e.target.value })
+                        }
                       />
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
+                        placeholder="Email"
                         label="Email"
                         fullWidth
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={newUser.email}
+                        onChange={(e) =>
+                          setNewUser({ ...newUser, email: e.target.value })
+                        }
                       />
                     </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        label="Password"
-                        type="password"
-                        fullWidth
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                    </Grid>
+
                     <Grid item xs={12}>
                       <TextField
                         label="Company Name"
+                        placeholder="Company Name"
                         fullWidth
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
+                        value={newUser.companyName}
+                        onChange={(e) =>
+                          setNewUser({
+                            ...newUser,
+                            companyName: e.target.value,
+                          })
+                        }
                       />
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
+                        placeholder="Designation"
                         label="Designation"
                         fullWidth
-                        value={designation}
-                        onChange={(e) => setDesignation(e.target.value)}
+                        value={newUser.designation}
+                        onChange={(e) =>
+                          setNewUser({
+                            ...newUser,
+                            designation: e.target.value,
+                          })
+                        }
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -153,32 +202,3 @@ function UserInfo({ user }) {
 
 export default UserInfo;
 
-
-
-
-  // <Box p={2}>
-  //   <Grid container spacing={2}>
-  //     <Grid item>
-  //       <Avatar
-  //         src="/path/to/profile-photo.jpg"
-  //         alt="Profile Photo"
-  //         sx={{ width: 150, height: 150 }}
-  //       />
-  //     </Grid>
-  //     <Grid item>
-  //       <Typography variant="h4">John Doe</Typography>
-  //       <Typography variant="subtitle1">john.doe@example.com</Typography>
-
-  //       {/* User Info Form */}
-  //       <form>
-  //         <TextField label="Name" fullWidth />
-  //         <TextField label="Email" fullWidth />
-  //         <TextField label="Profile Photo URL" fullWidth />
-  //         <TextField label="City" fullWidth />
-  //         <Button variant="contained" color="primary" type="submit">
-  //           Save
-  //         </Button>
-  //       </form>
-  //     </Grid>
-  //   </Grid>
-  // </Box>
