@@ -38,8 +38,11 @@ const Navbar = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
-    navigate('/profile');
   };
+  const handleProfile = ()=>{
+    handleClose()
+    navigate('/profile');
+  }
   const handleLogout = ()=>{
     handleClose()
     Cookies.remove('token')
@@ -178,7 +181,7 @@ const Navbar = () => {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          <MenuItem onClick={handleClose}>
+          <MenuItem onClick={handleProfile}>
             <Avatar /> My account
           </MenuItem>
           <MenuItem onClick={handleLogout}>

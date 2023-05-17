@@ -12,6 +12,7 @@ const Dashboard = () => {
         bottom: "0",
         top: "0",
         position: "absolute",
+        overflow:'hidden'
       }}
     >
       <Navbar />
@@ -42,7 +43,8 @@ const Dashboard = () => {
           },
           display:'flex',
           flexDirection:'column',
-          marginLeft:'25vw'
+          marginLeft:'25vw',
+          height: '70vh'
         }}
       >
         <QuestionList />
