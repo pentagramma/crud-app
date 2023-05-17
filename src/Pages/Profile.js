@@ -2,14 +2,10 @@ import React, { useEffect, useState } from "react";
 import {
   Grid,
   Box,
-  Avatar,
-  Typography,
   List,
   ListItem,
   ListItemText,
   ListItemIcon,
-  TextField,
-  Button,
 } from "@mui/material";
 import { Person, QuestionAnswer, Email } from "@mui/icons-material";
 import axios from "axios";
@@ -20,12 +16,12 @@ import UserAnswers from "../components/UserAnswers";
 import Navbar from "../components/Navbar";
 
 const Profile = () => {
-  const [questions, setQuestions] = useState([]);
   const [user, setUser] = useState();
   const [section, setSection] = useState("profile");
   useEffect(() => {
     fetchUser();
   }, []);
+  
   const fetchUser = async () => {
     try {
       const response = await axios.get(`${base_url}/api/v1/user/profile`);
@@ -34,24 +30,11 @@ const Profile = () => {
       console.log(err);
     }
   };
-  const handleMyQuestionsClick = async (email) => {
+  const handleMyQuestionsClick = async () => {
     setSection("questions");
-    try {
-      console.log("inquestions page");
-      const response = await axios.get(`${base_url}/api/v1/questions`, {
-        params: {
-          userId: user._id,
-        },
-      });
-
-      console.log(response.data);
-      setQuestions(response.data.questions);
-    } catch (error) {
-      console.error("An error occurred while fetching user questions:", error);
-    }
   };
 
-  const handleMyAnswersClick = async (email) => {
+  const handleMyAnswersClick = async () => {
     setSection("answers");
   };
 
@@ -61,25 +44,22 @@ const Profile = () => {
   return (
     <Grid container>
       <Navbar />
-      <Grid item xs={3}>
+      <Grid item xs={2}>
         <Box bgcolor="#f0f0f0" minHeight="100vh" p={2}>
           <List>
-            <ListItem
-              button
-              onClick={() => handleMyQuestionsClick("abc1235@gmail.com")}
-            >
+            <ListItem button onClick={handleMyQuestionsClick}>
               <ListItemIcon>
                 <Person />
               </ListItemIcon>
               <ListItemText primary="My Questions" />
             </ListItem>
-            <ListItem button onClick={() => handleMyAnswersClick("")}>
+            <ListItem button onClick={handleMyAnswersClick}>
               <ListItemIcon>
                 <QuestionAnswer />
               </ListItemIcon>
               <ListItemText primary="My Answers" />
             </ListItem>
-            <ListItem button onClick={() => handleMyProfileClick()}>
+            <ListItem button onClick={handleMyProfileClick}>
               <ListItemIcon>
                 <Email />
               </ListItemIcon>
@@ -88,11 +68,11 @@ const Profile = () => {
           </List>
         </Box>
       </Grid>
-      <Grid item xs={9}>
+      <Grid item xs={10}>
         {section === "profile" ? (
           <UserInfo user={user} />
         ) : section === "questions" ? (
-          <UserQuestions />
+          <UserQuestions user={user} />
         ) : (
           <UserAnswers />
         )}

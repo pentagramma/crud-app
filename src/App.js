@@ -70,7 +70,7 @@ function App() {
         <Route exact path="/signup" element={<SignUp />} />
         <Route exact path="/each-question" element={<EachQuestionPage/>}/>
       </Routes>
-      <Footer/>
+
     </>
   );
 }
