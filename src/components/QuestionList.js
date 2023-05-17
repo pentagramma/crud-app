@@ -11,6 +11,7 @@ import { base_url } from '../utils/base_url';
 
 const QuestionList = () => {
     const questionArray = useSelector(state => state.questions.questionArray)
+    const questionReloadTrigger = useSelector(state => state.extras.trigger)
     const dispatch = useDispatch()
     const [loader,setLoader] = useState(false)
 
@@ -23,7 +24,7 @@ const QuestionList = () => {
         }).catch(e=>{
             console.log(e)
         })
-    },[])
+    },[questionReloadTrigger])
 
   return (
     <>
