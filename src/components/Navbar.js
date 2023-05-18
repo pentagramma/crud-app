@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import ModalView from "./ModalView";
 import { useSelector } from 'react-redux';
 
-const Navbar = () => {
+const Navbar = ({page}) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [resetAI, setResetAI] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -126,7 +126,7 @@ const Navbar = () => {
         <Typography variant="h6" component="div" width={"10vw"}>
           Q&AI
         </Typography>
-        <Search>
+       {page && <Search>
           <SearchIconWrapper>
             <SearchIcon />
           </SearchIconWrapper>
@@ -134,7 +134,7 @@ const Navbar = () => {
             placeholder="Search your query..."
             inputProps={{ "aria-label": "search" }}
           />
-        </Search>
+        </Search>}
         <Box sx={{ flexGrow: 1 }} />
         <Stack direction={"row"} spacing={2}>
           <Button color="inherit" onClick={()=>{setIsModalOpen(true)}}>Post a Question</Button>
