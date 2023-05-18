@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import {
   Box,
@@ -16,6 +16,13 @@ import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import BotAvatar from "../images/bot-avatar.png";
 import LoadingImage from "../images/loading-gif.gif";
 import axios from "axios";
+import { useLocation } from "react-router";
+import { base_url } from "../utils/base_url";
+import QuestionLoader from "../utils/QuestionLoader";
+import { useSelector, useDispatch } from "react-redux";
+import { triggerAnswerReload } from "../redux/Extras/extraActions";
+import Footer from "../components/Footer";
+
 
 let arr = [
   {
@@ -39,10 +46,52 @@ let arr = [
 ];
 
 const EachQuestionPage = () => {
+  const location = useLocation();
+  const [questionData, setQuestionData] = useState({
+    question:"",
+    ans_count:0,
+    category:"",
+    gpt_answer:"",
+    likes:0,
+    postedBy:{
+      firstName:""
+    },
+    answers:[{
+      answer:"",
+      postedBy:{
+        firstName:""
+      },
+      likes:"",
+      timestamp:""
+    }]
+  });
+  const [loader, setLoader] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalLoader, setModalLoader] = useState(false);
   const [answerHelperText, setAnswerHelperText] = useState("");
   const [answer, setAnswer] = useState("");
+  const user = useSelector((state) => state.user.user);
+  const answerTrigger = useSelector((state)=>state.extras.triggerAnswer)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    setLoader(true);
+    fetchQuestion();
+  }, [answerTrigger]);
+
+  const fetchQuestion = async () => {
+    await axios
+      .get(`${base_url}/api/v1/questions/${location.state}`)
+      .then((response) => {
+        setQuestionData(response.data.question);
+        setLoader(false);
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (answer === "") {
@@ -51,12 +100,19 @@ const EachQuestionPage = () => {
       setAnswerHelperText("");
       setModalLoader(true);
       axios
-        .patch(``)
+        .patch(`${base_url}/api/v1/questions/answers/${questionData._id}`,{
+          answer:answer,
+          postedBy:user._id
+        })
         .then((response) => {
+          setAnswer("")
           setModalLoader(false);
+          setIsModalOpen(false);
+          dispatch(triggerAnswerReload())
         })
         .catch((err) => {
           console.log(err);
+          setModalLoader(false);
         });
     }
   };
@@ -67,8 +123,8 @@ const EachQuestionPage = () => {
         bottom: "0",
         top: "0",
         position: "absolute",
-        overflow: "hidden",
         width: "100vw",
+        height: "fit-content"
       }}
     >
       <Modal
@@ -152,218 +208,19 @@ const EachQuestionPage = () => {
         sx={{
           marginLeft: "25vw",
           marginTop: "7vh",
-          height: "70vh",
+          height: "80vh",
           overflowY: "scroll",
           "&::-webkit-scrollbar": {
             display: "none",
           },
           width: "fit-content",
+          marginBottom:'40px'
         }}
       >
-        <Box
-          sx={{
-            width: "50vw",
-            height: "fit-content",
-            backgroundColor: "white",
-            gap: "10px",
-            padding: "10px",
-            marginBottom: "10px",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-            }}
-          >
-            <Box
-              sx={{
-                marginRight: "5px",
-                marginTop: "10px",
-                width: "3vw",
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Avatar
-                sx={{
-                  cursor: "pointer",
-                  backgroundColor: "#9c27b0",
-                }}
-              >
-                h
-              </Avatar>
-            </Box>
-            <Box
-              sx={{
-                marginLeft: "20px",
-                marginTop: "10px",
-                height: "100%",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontWeight: "550",
-                  marginBottom: "10px",
-                }}
-                variant={"h5"}
-              >
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nulla
-                modi soluta molestiae aliquid repellendus at voluptates repellat
-                minima, tenetur earum nihil, eum cum est consequatur ipsa,
-                architecto nam dignissimos quia?
-              </Typography>
-            </Box>
-          </Box>
-          <Divider />
-          <Box
-            sx={{
-              width: "100%",
-              height: "7vh",
-              backgroundColor: "white",
-              padding: "10px",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                marginLeft: "10px",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  marginRight: "30px",
-                  height: "100%",
-                  alignItems: "center",
-                }}
-              >
-                <ThumbUpOffAltIcon
-                  sx={{
-                    cursor: "pointer",
-                    color: "#9c27b0",
-                  }}
-                />
-                <Typography
-                  sx={{
-                    marginLeft: "10px",
-                    fontSize: "12px",
-                    color: "#9c27b0",
-                  }}
-                >
-                  54
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  height: "100%",
-                  alignItems: "center",
-                }}
-              >
-                <AccessTimeFilledIcon />
-                <Typography
-                  sx={{
-                    marginLeft: "10px",
-                    fontSize: "12px",
-                  }}
-                >
-                  15/4/2023
-                </Typography>
-              </Box>
-            </Box>
-            <Box>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => {
-                  setIsModalOpen(true);
-                }}
-              >
-                Answer this question
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            width: "50vw",
-            height: "fit-content",
-            backgroundColor: "white",
-            gap: "10px",
-            padding: "10px",
-            marginBottom: "20px",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-            }}
-          >
-            <Box
-              sx={{
-                marginRight: "5px",
-                marginTop: "10px",
-                width: "3vw",
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Avatar
-                sx={{
-                  cursor: "pointer",
-                  backgroundColor: "#9c27b0",
-                }}
-                src={BotAvatar}
-                alt="bot-avatar"
-              />
-            </Box>
-            <Box
-              sx={{
-                marginLeft: "20px",
-                marginTop: "10px",
-                height: "100%",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontWeight: "550",
-                  marginBottom: "10px",
-                }}
-                variant={"h5"}
-              >
-                Answer by AI
-              </Typography>
-              <Typography
-                sx={{
-                  fontWeight: "500",
-                  marginBottom: "10px",
-                }}
-                variant={"h6"}
-              >
-                What is you name absajbsf kasjfbkasbf kasjfbkajbfkjasbfajsflaf
-                fjkasbf aksfajbfkjasfbkafbkasfbkasbfkasfask kjabfkjabsfkbfajkb
-                asfnaks jasbfjkabfjb jasfjasbfjabf jasfkjafbasf
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: "550",
-            marginBottom: "10px",
-          }}
-        >
-          4 community answers
-        </Typography>
-        {arr.map((each) => {
-          return (
+        {loader ? (
+          <QuestionLoader />
+        ) : (
+          <>
             <Box
               sx={{
                 width: "50vw",
@@ -371,7 +228,7 @@ const EachQuestionPage = () => {
                 backgroundColor: "white",
                 gap: "10px",
                 padding: "10px",
-                marginBottom: "20px",
+                marginBottom: "10px",
               }}
             >
               <Box
@@ -396,7 +253,7 @@ const EachQuestionPage = () => {
                       backgroundColor: "#9c27b0",
                     }}
                   >
-                    {each.postedBy.slice(0, 1)}
+                    h
                   </Avatar>
                 </Box>
                 <Box
@@ -413,16 +270,7 @@ const EachQuestionPage = () => {
                     }}
                     variant={"h5"}
                   >
-                    {each.postedBy} says...
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: "500",
-                      marginBottom: "10px",
-                    }}
-                    variant={"h6"}
-                  >
-                    {each.answer}
+                    {questionData.question}
                   </Typography>
                 </Box>
               </Box>
@@ -464,32 +312,243 @@ const EachQuestionPage = () => {
                         color: "#9c27b0",
                       }}
                     >
-                      {each.likes}
+                      {questionData.likes}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      height: "100%",
+                      alignItems: "center",
+                    }}
+                  >
+                    <AccessTimeFilledIcon />
+                    <Typography
+                      sx={{
+                        marginLeft: "10px",
+                        fontSize: "12px",
+                      }}
+                    >
+                      {questionData.createdAt}
                     </Typography>
                   </Box>
                 </Box>
+                <Box>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => {
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    Answer this question
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                width: "50vw",
+                height: "fit-content",
+                backgroundColor: "white",
+                gap: "10px",
+                padding: "10px",
+                marginBottom: "20px",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                }}
+              >
                 <Box
                   sx={{
-                    display: "flex",
+                    marginRight: "5px",
+                    marginTop: "10px",
+                    width: "3vw",
                     height: "100%",
+                    display: "flex",
+                    justifyContent: "center",
                     alignItems: "center",
                   }}
                 >
-                  <AccessTimeFilledIcon />
+                  <Avatar
+                    sx={{
+                      cursor: "pointer",
+                      backgroundColor: "#9c27b0",
+                    }}
+                    src={BotAvatar}
+                    alt="bot-avatar"
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    marginLeft: "20px",
+                    marginTop: "10px",
+                    height: "100%",
+                  }}
+                >
                   <Typography
                     sx={{
-                      marginLeft: "10px",
-                      fontSize: "12px",
+                      fontWeight: "550",
+                      marginBottom: "10px",
                     }}
+                    variant={"h5"}
                   >
-                    {each.time}
+                    Answer by AI
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: "500",
+                      marginBottom: "10px",
+                    }}
+                    variant={"h6"}
+                  >
+                    {questionData.gpt_answer}
                   </Typography>
                 </Box>
               </Box>
             </Box>
-          );
-        })}
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: "550",
+                marginBottom: "10px",
+              }}
+            >
+              {questionData.answers.length} community {questionData.answers.length<2?"answer":"answers"}
+            </Typography>
+            {questionData.answers.map((each) => {
+              return (
+                <Box
+                  sx={{
+                    width: "50vw",
+                    height: "fit-content",
+                    backgroundColor: "white",
+                    gap: "10px",
+                    padding: "10px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        marginRight: "5px",
+                        marginTop: "10px",
+                        width: "3vw",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Avatar
+                        sx={{
+                          cursor: "pointer",
+                          backgroundColor: "#9c27b0",
+                        }}
+                      >
+                        {each.postedBy.firstName.slice(0, 1)}
+                      </Avatar>
+                    </Box>
+                    <Box
+                      sx={{
+                        marginLeft: "20px",
+                        marginTop: "10px",
+                        height: "100%",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontWeight: "550",
+                          marginBottom: "10px",
+                        }}
+                        variant={"h5"}
+                      >
+                        {each.postedBy.firstName} says...
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontWeight: "500",
+                          marginBottom: "10px",
+                        }}
+                        variant={"h6"}
+                      >
+                        {each.answer}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Divider />
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "7vh",
+                      backgroundColor: "white",
+                      padding: "10px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          marginRight: "30px",
+                          height: "100%",
+                          alignItems: "center",
+                        }}
+                      >
+                        <ThumbUpOffAltIcon
+                          sx={{
+                            cursor: "pointer",
+                            color: "#9c27b0",
+                          }}
+                        />
+                        <Typography
+                          sx={{
+                            marginLeft: "10px",
+                            fontSize: "12px",
+                            color: "#9c27b0",
+                          }}
+                        >
+                          {each.likes}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        height: "100%",
+                        alignItems: "center",
+                      }}
+                    >
+                      <AccessTimeFilledIcon />
+                      <Typography
+                        sx={{
+                          marginLeft: "10px",
+                          fontSize: "12px",
+                        }}
+                      >
+                        {each.timestamp}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              );
+            })}
+          </>
+        )}
       </Box>
+      <Footer/>
     </Box>
   );
 };
