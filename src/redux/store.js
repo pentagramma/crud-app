@@ -1,10 +1,12 @@
 import { createStore, combineReducers } from "redux";
 import questionsReducer from "./Questions/questionsReducer";
 import extraReducer from "./Extras/extraReducer";
+import loginReducers from "./Login/loginReducers";
 
 const rootReducer = combineReducers({
     questions: questionsReducer,
-    extras: extraReducer
+    extras: extraReducer,
+    user:loginReducers
 })
 
 const store = createStore(rootReducer)

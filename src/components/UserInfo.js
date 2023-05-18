@@ -13,8 +13,10 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import axios from "axios";
 import { base_url } from "../utils/base_url";
+import { useSelector } from "react-redux";
 
-function UserInfo({ user }) {
+function UserInfo() {
+  const user = useSelector((state) => state.user.user);
   const [newUser, setNewUser] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -28,8 +30,6 @@ function UserInfo({ user }) {
 
   const handleUpdate = async () => {
     setTempUser(newUser);
-
-    console.log(newUser);
     const response = await axios.put(
       `${base_url}/api/v1/user/update/${user._id}`,
       newUser
@@ -43,8 +43,6 @@ function UserInfo({ user }) {
       designation: tempUser.designation || "",
       imageUrl: tempUser.imageUrl || "",
     });
-    console.log(response.data);
-    console.log(profilePicture);
   };
 
   const handleProfilePictureChange = (e) => {
@@ -58,8 +56,6 @@ function UserInfo({ user }) {
 
     reader.readAsDataURL(file);
   };
-
-  useEffect(() => console.log(user), []);
 
   const theme = createTheme();
 
@@ -201,4 +197,3 @@ function UserInfo({ user }) {
 }
 
 export default UserInfo;
-

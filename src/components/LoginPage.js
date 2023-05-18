@@ -14,11 +14,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { checkFormData } from "../utils/loginValidation";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 import { base_url } from "../utils/base_url";
 import Cookies from "js-cookie";
+import { loginActions } from "../redux/Login/loginActions";
 
 const LoginPage = () => {
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -53,27 +56,36 @@ const LoginPage = () => {
     if (Object.keys(validationResult).length > 0) {
       setHelperText({ ...validationResult });
     } else {
-      try{
+      try {
         axios
-        .post(`${base_url}/api/v1/user/login`, formData)
-        .then((response) => {
-          setFormData({
-            email: "",
-            password: "",
+          .post(`${base_url}/api/v1/user/login`, formData)
+          .then((response) => {
+            setFormData({
+              email: "",
+              password: "",
+            });
+
+            Cookies.set("token", response.data.token);
+            Cookies.set("refresh-token", response.data.refresh_token);
+            Cookies.set("status", "Y");
           })
-          Cookies.set('token',response.data.token)
-          Cookies.set('refresh-token',response.data.refresh_token)
-          Cookies.set('status','Y')
-          navigate('/',{replace:true})
-        })
-        .catch((error) => {
-          setErr(true);
-          setErrorVal(error.response.data.message);
-          setSeverity("error")
-        });
-      }
-      catch(e){
-        console.log(e.message)
+          .then(() => {
+            const fetchUser = async () => {
+              const response = await axios.get(
+                `${base_url}/api/v1/user/profile`
+              );
+              dispatch(loginActions(response.data.user));
+            };
+            fetchUser();
+            navigate("/", { replace: true });
+          })
+          .catch((error) => {
+            setErr(true);
+            setErrorVal(error.response.data.message);
+            setSeverity("error");
+          });
+      } catch (e) {
+        console.log(e.message);
       }
     }
   };

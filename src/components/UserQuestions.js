@@ -6,18 +6,24 @@ import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import axios from "axios";
 import { base_url } from "../utils/base_url";
 import { formatDistanceToNow } from "date-fns";
+import { useSelector } from 'react-redux';
 
-function UserQuestions({ user }) {
+function UserQuestions() {
   const [questions, setQuestions] = useState([]);
-  const [timeAgo, setTimeAgo] = useState();
+  const user = useSelector((state) => state.user.user);
+  
   useEffect(() => {
     fetchQuestionsByUserId();
   }, []);
 
   const getTimeAgo = (createdAt) => {
     const distance = formatDistanceToNow(new Date(createdAt));
-    const [text, value, unit] = distance.split(" ");
-    return `${value} ${unit} ago`;
+    if (distance == "less than a minute") return "Just now";
+    const arr = distance.split(" ");
+    if (arr.length === 2) {
+      return `${arr[0]} ${arr[1]} ago`;
+    }
+    return `${arr[1]} ${arr[2]} ago`;
   };
 
   const fetchQuestionsByUserId = async () => {
@@ -26,7 +32,6 @@ function UserQuestions({ user }) {
         `${base_url}/api/v1/questions/user?userId=${user._id}`
       );
       const data = response.data;
-      console.log(data.questions);
       setQuestions(data.questions);
     } catch (error) {
       console.error("Error fetching questions:", error);
