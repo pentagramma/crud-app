@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Box,
@@ -14,47 +14,76 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import axios from "axios";
 import { base_url } from "../utils/base_url";
 import { useSelector } from "react-redux";
+import { checkFormData } from "../utils/updateUserValidation";
 
 function UserInfo() {
-  const user = useSelector((state) => state.user.user);
-  const [newUser, setNewUser] = useState({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    companyName: user?.companyName || "",
-    designation: user?.designation || "",
-    imageUrl: user?.profilePicture || "",
+  const [helperText, setHelperText] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    companyName: "",
+    designation: "",
   });
-  const [tempUser, setTempUser] = useState();
-  const [profilePicture, setProfilePicture] = useState("profile-picture.jpg");
-
-  const handleUpdate = async () => {
-    setTempUser(newUser);
-    const response = await axios.put(
-      `${base_url}/api/v1/user/update/${user._id}`,
-      newUser
-    );
-
-    setNewUser({
-      firstName: tempUser.firstName || "",
-      lastName: tempUser.lastName || "",
-      email: tempUser.email || "",
-      companyName: tempUser.companyName || "",
-      designation: tempUser.designation || "",
-      imageUrl: tempUser.imageUrl || "",
-    });
-  };
-
+  const [err, setErr] = useState(false);
+  const [errorVal, setErrorVal] = useState("");
+  const user = useSelector((state) => state.user.user);
+  const [formData, setFormData] = useState({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    companyName: user.companyName,
+    designation: user.designation,
+  });
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      setNewUser({ ...newUser, imageUrl: e.target.result });
+      //setNewUser({ ...newUser, imageUrl: e.target.result });
       // setProfilePicture(e.target.result);
     };
 
     reader.readAsDataURL(file);
+  };
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    console.log("Submit handler");
+
+    setErr(false);
+    const validationResult = checkFormData(formData, user);
+    console.log(formData);
+    console.log(validationResult);
+    setHelperText({
+      firstName: "",
+      lastName: "",
+      email: "",
+      companyName: "",
+      designation: "",
+    });
+    if (Object.keys(validationResult).length > 0) {
+      setHelperText({ ...validationResult });
+    } else {
+      await axios
+        .put(`${base_url}/api/v1/user/update/${user._id}`, formData)
+        .then((response) => {
+          setFormData({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            companyName: formData.companyName,
+            designation: formData.designation,
+          });
+        })
+        .catch((error) => {
+          setErr(true);
+          setErrorVal(error.response.data.message);
+        });
+    }
+  };
+
+  const inputChangeHandler = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const theme = createTheme();
@@ -77,18 +106,40 @@ function UserInfo() {
                     style={{ display: "none" }}
                     onChange={handleProfilePictureChange}
                   />
-                  <IconButton component="span">
+                  <Box position="relative" display="inline-block">
                     <Avatar
                       alt="Profile Picture"
-                      src={profilePicture}
+                      // src={profilePicture}
                       sx={{
                         width: "150px",
                         height: "150px",
-                        margin: "0 auto 16px",
+                        margin: "2px auto 16px",
+                        position: "relative",
                       }}
-                    />
-                    <PhotoCameraIcon />
-                  </IconButton>
+                      avatarStyle={{
+                        position: "relative",
+                        zIndex: 1,
+                      }}
+                    >
+                      {user.firstName.charAt(0).toUpperCase()}
+
+                      <IconButton
+                        component="span"
+                        sx={{
+                          position: "absolute",
+                          bottom: "8px",
+                          right: "8px",
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <PhotoCameraIcon
+                          sx={{
+                            marginBottom: "5px",
+                          }}
+                        />
+                      </IconButton>
+                    </Avatar>
+                  </Box>
                 </label>
                 <Typography variant="h6">
                   {user?.firstName?.charAt(0).toUpperCase()}
@@ -112,17 +163,17 @@ function UserInfo() {
                 <Typography variant="h6" gutterBottom>
                   Update Your Details
                 </Typography>
-                <form>
+                <form onSubmit={onSubmitHandler}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
                         placeholder="First Name"
                         label="First Name"
                         fullWidth
-                        value={newUser.firstName}
-                        onChange={(e) =>
-                          setNewUser({ ...newUser, firstName: e.target.value })
-                        }
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={inputChangeHandler}
+                        helperText={helperText.firstName}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -130,10 +181,10 @@ function UserInfo() {
                         placeholder="Last Name"
                         label="Last Name"
                         fullWidth
-                        value={newUser.lastName}
-                        onChange={(e) =>
-                          setNewUser({ ...newUser, lastName: e.target.value })
-                        }
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={inputChangeHandler}
+                        helperText={helperText.lastName}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -141,10 +192,10 @@ function UserInfo() {
                         placeholder="Email"
                         label="Email"
                         fullWidth
-                        value={newUser.email}
-                        onChange={(e) =>
-                          setNewUser({ ...newUser, email: e.target.value })
-                        }
+                        name="email"
+                        value={formData.email}
+                        onChange={inputChangeHandler}
+                        helperText={helperText.email}
                       />
                     </Grid>
 
@@ -153,13 +204,10 @@ function UserInfo() {
                         label="Company Name"
                         placeholder="Company Name"
                         fullWidth
-                        value={newUser.companyName}
-                        onChange={(e) =>
-                          setNewUser({
-                            ...newUser,
-                            companyName: e.target.value,
-                          })
-                        }
+                        name="companyName"
+                        value={formData.companyName}
+                        onChange={inputChangeHandler}
+                        helperText={helperText.companyName}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -167,21 +215,14 @@ function UserInfo() {
                         placeholder="Designation"
                         label="Designation"
                         fullWidth
-                        value={newUser.designation}
-                        onChange={(e) =>
-                          setNewUser({
-                            ...newUser,
-                            designation: e.target.value,
-                          })
-                        }
+                        name="designation"
+                        value={formData.designation}
+                        helperText={helperText.designation}
+                        onChange={inputChangeHandler}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleUpdate}
-                      >
+                      <Button variant="contained" color="primary" type="submit">
                         Update
                       </Button>
                     </Grid>
