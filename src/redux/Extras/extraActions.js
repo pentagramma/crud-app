@@ -4,3 +4,9 @@ export const triggerQuestionReload = ()=>{
         type: "TRIGGER_QUESTION_RELOAD"
     }
 }
+
+export const triggerAnswerReload = ()=>{
+    return {
+        type: "TRIGGER_ANSWER_RELOAD"
+    }
+}

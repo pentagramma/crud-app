@@ -20,7 +20,6 @@ import Cookies from "js-cookie";
 import { loginActions } from "../redux/Login/loginActions";
 
 const LoginPage = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",

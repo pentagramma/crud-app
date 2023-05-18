@@ -69,7 +69,7 @@ function App() {
         />
         <Route exact path="/login" element={<LoginPage />} />
         <Route exact path="/signup" element={<SignUp />} />
-        <Route exact path="/each-question" element={<EachQuestionPage />} />
+        <Route exact path="/each-question" element={<LoginAuth><EachQuestionPage/></LoginAuth>} />
       </Routes>
     </>
   );

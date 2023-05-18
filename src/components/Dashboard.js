@@ -6,9 +6,11 @@ import QuestionList from "./QuestionList";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Footer from "./Footer";
+import { Category } from "@mui/icons-material";
 const Dashboard = () => {
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(1);
+  const [category,setCategory] = useState("")
   const backPageHandler = () => {
     if (page > 1) {
       setPage((x) => x - 1);
@@ -19,6 +21,10 @@ const Dashboard = () => {
       setPage((x) => x + 1);
     }
   };
+  const changeCategoryHandler = (e)=>{
+    setCategory(e.target.value)
+    setPage(1)
+  }
   return (
     <Box
       bgcolor={"#ecf0f1"}
@@ -48,7 +54,10 @@ const Dashboard = () => {
             label="Choose Category"
             select
             fullWidth
+            value={category}
+            onChange={changeCategoryHandler}
           >
+            <MenuItem value={"All"}>All</MenuItem>
             <MenuItem value={"Technology"}>Technology</MenuItem>
             <MenuItem value={"Business"}>Business</MenuItem>
             <MenuItem value={"Philosophy"}>Philosophy</MenuItem>
@@ -108,9 +117,10 @@ const Dashboard = () => {
           marginLeft: "25vw",
           height: "70vh",
           width: "fit-content",
+          marginBottom:'30px'
         }}
       >
-        <QuestionList page={page} setPageCount={setPageCount} />
+        <QuestionList page={page} setPageCount={setPageCount} category={category}/>
       </Box>
       <Footer />
     </Box>

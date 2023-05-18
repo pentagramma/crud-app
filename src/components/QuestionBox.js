@@ -4,8 +4,10 @@ import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import { formatDistanceToNow } from "date-fns";
+import { useNavigate } from "react-router";
 
 function QuestionBox({ each }) {
+  const navigate = useNavigate()
   const getTimeAgo = (createdAt) => {
     const distance = formatDistanceToNow(new Date(createdAt));
     if (distance == "less than a minute") return "Just now";
@@ -15,6 +17,10 @@ function QuestionBox({ each }) {
     }
     return `${arr[1]} ${arr[2]} ago`;
   };
+
+  const nextPageHandler = ()=>{
+    navigate('/each-question',{state:each._id})
+  }
 
   return (
     <Box
@@ -72,6 +78,7 @@ function QuestionBox({ each }) {
             },
           }}
           variant={"h5"}
+          onClick={nextPageHandler}
         >
           {each.question}
         </Typography>
@@ -112,7 +119,7 @@ function QuestionBox({ each }) {
               fontSize: "12px",
             }}
           >
-            {each.ans_count}
+            {each.answers.length}
           </Typography>
         </Box>
         <Box
