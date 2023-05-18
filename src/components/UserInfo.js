@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Box,
@@ -24,35 +24,50 @@ function UserInfo() {
     companyName: "",
     designation: "",
   });
+  const [url,setUrl]=useState(null)
+  const [selectedFile, setSelectedFile] = useState(null);
   const [err, setErr] = useState(false);
   const [errorVal, setErrorVal] = useState("");
   const user = useSelector((state) => state.user.user);
-  const [formData, setFormData] = useState({
+  const [formDatas, setFormData] = useState({
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
     companyName: user.companyName,
     designation: user.designation,
   });
-  const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
+ 
 
-    reader.onload = (e) => {
-      //setNewUser({ ...newUser, imageUrl: e.target.result });
-      // setProfilePicture(e.target.result);
-    };
+  const handleProfilePictureChange =  (e) => {
+    setSelectedFile(e.target.files[0])
+  };
 
-    reader.readAsDataURL(file);
+  const imageClickHandler = async (e) => {
+    try {
+       const formData = new FormData();
+      formData.append("image", selectedFile);
+      formData.append("userId", user._id);
+      const response = await axios.put(
+        `${base_url}/api/v1/user/updateProfilePicture`,
+       formData
+      ).then(()=>{
+        setUrl(`${base_url}/${user.imageUrl}`)
+        console.log(`${base_url}/${user.imageUrl}`)
+      })
+       
+    
+    
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to upload image.");
+    }
   };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    console.log("Submit handler");
-
     setErr(false);
-    const validationResult = checkFormData(formData, user);
-    console.log(formData);
+    const validationResult = checkFormData(formDatas, user);
+    console.log(formDatas);
     console.log(validationResult);
     setHelperText({
       firstName: "",
@@ -65,14 +80,14 @@ function UserInfo() {
       setHelperText({ ...validationResult });
     } else {
       await axios
-        .put(`${base_url}/api/v1/user/update/${user._id}`, formData)
+        .put(`${base_url}/api/v1/user/update/${user._id}`, formDatas)
         .then((response) => {
           setFormData({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            companyName: formData.companyName,
-            designation: formData.designation,
+            firstName: formDatas.firstName,
+            lastName: formDatas.lastName,
+            email: formDatas.email,
+            companyName: formDatas.companyName,
+            designation: formDatas.designation,
           });
         })
         .catch((error) => {
@@ -83,14 +98,14 @@ function UserInfo() {
   };
 
   const inputChangeHandler = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formDatas, [e.target.name]: e.target.value });
   };
 
   const theme = createTheme();
 
   return (
     <ThemeProvider theme={theme}>
-      <Box p={2}>
+      <Box p={2} sx={{marginLeft:"12px"}}>
         <Typography variant="h4" gutterBottom>
           User Profile
         </Typography>
@@ -98,49 +113,60 @@ function UserInfo() {
           <Grid item xs={12} sm={4}>
             <Paper>
               <Box p={2} textAlign="center">
-                <label htmlFor="profile-picture-upload">
-                  <input
-                    type="file"
-                    id="profile-picture-upload"
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    onChange={handleProfilePictureChange}
-                  />
-                  <Box position="relative" display="inline-block">
-                    <Avatar
-                      alt="Profile Picture"
-                      // src={profilePicture}
-                      sx={{
-                        width: "150px",
-                        height: "150px",
-                        margin: "2px auto 16px",
-                        position: "relative",
-                      }}
-                      avatarStyle={{
-                        position: "relative",
-                        zIndex: 1,
-                      }}
-                    >
-                      {user.firstName.charAt(0).toUpperCase()}
-
-                      <IconButton
-                        component="span"
+               
+                  <label htmlFor="profile-picture-upload">
+                    <input
+                      type="file"
+                      id="profile-picture-upload"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleProfilePictureChange}
+                    />
+                    <Box position="relative" display="inline-block">
+                      <Avatar
+                        alt="Profile Picture"
+                         src={url}
                         sx={{
-                          position: "absolute",
-                          bottom: "8px",
-                          right: "8px",
-                          backgroundColor: "white",
+                          width: "150px",
+                          height: "150px",
+                          margin: "2px auto 16px",
+                          position: "relative",
+                        }}
+                        avatarStyle={{
+                          position: "relative",
+                          zIndex: 1,
                         }}
                       >
-                        <PhotoCameraIcon
+                        {user.firstName.charAt(0).toUpperCase()}
+
+                        <IconButton
+                          component="span"
                           sx={{
-                            marginBottom: "5px",
+                            position: "absolute",
+                            bottom: "8px",
+                            right: "8px",
+                            backgroundColor: "white",
                           }}
-                        />
-                      </IconButton>
-                    </Avatar>
-                  </Box>
-                </label>
+                        >
+                          <PhotoCameraIcon
+                            sx={{
+                              marginBottom: "5px",
+                            }}
+                          />
+                        </IconButton>
+                      </Avatar>
+                    </Box>
+                  </label>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    type="submit"
+                    size="small"
+                    onClick={imageClickHandler}
+                  >
+                    Upload Image
+                  </Button>
+          
                 <Typography variant="h6">
                   {user?.firstName?.charAt(0).toUpperCase()}
                   {user?.firstName?.slice(1)}{" "}
@@ -171,7 +197,7 @@ function UserInfo() {
                         label="First Name"
                         fullWidth
                         name="firstName"
-                        value={formData.firstName}
+                        value={formDatas.firstName}
                         onChange={inputChangeHandler}
                         helperText={helperText.firstName}
                       />
@@ -182,7 +208,7 @@ function UserInfo() {
                         label="Last Name"
                         fullWidth
                         name="lastName"
-                        value={formData.lastName}
+                        value={formDatas.lastName}
                         onChange={inputChangeHandler}
                         helperText={helperText.lastName}
                       />
@@ -193,7 +219,7 @@ function UserInfo() {
                         label="Email"
                         fullWidth
                         name="email"
-                        value={formData.email}
+                        value={formDatas.email}
                         onChange={inputChangeHandler}
                         helperText={helperText.email}
                       />
@@ -205,7 +231,7 @@ function UserInfo() {
                         placeholder="Company Name"
                         fullWidth
                         name="companyName"
-                        value={formData.companyName}
+                        value={formDatas.companyName}
                         onChange={inputChangeHandler}
                         helperText={helperText.companyName}
                       />
@@ -216,13 +242,17 @@ function UserInfo() {
                         label="Designation"
                         fullWidth
                         name="designation"
-                        value={formData.designation}
+                        value={formDatas.designation}
                         helperText={helperText.designation}
                         onChange={inputChangeHandler}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <Button variant="contained" color="secondary" type="submit">
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        type="submit"
+                      >
                         Update
                       </Button>
                     </Grid>
