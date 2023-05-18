@@ -8,16 +8,15 @@ import { formatDistanceToNow } from "date-fns";
 function QuestionBox({ each }) {
   const getTimeAgo = (createdAt) => {
     const distance = formatDistanceToNow(new Date(createdAt));
+    if (distance == "less than a minute") return "Just now";
     const arr = distance.split(" ");
-    if(arr.length===2){
-        return `${arr[0]} ${arr[1]} ago`;
+    if (arr.length === 2) {
+      return `${arr[0]} ${arr[1]} ago`;
     }
     return `${arr[1]} ${arr[2]} ago`;
-    
   };
-  useEffect(()=> console.log(each),[])
+
   return (
-   
     <Box
       sx={{
         width: "50vw",
@@ -145,7 +144,7 @@ function QuestionBox({ each }) {
               fontSize: "10px",
             }}
           >
-             {getTimeAgo(each.createdAt)}
+            {getTimeAgo(each.createdAt)}
           </Typography>
         </Box>
       </Box>

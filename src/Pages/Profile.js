@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Box,
@@ -8,28 +8,14 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import { Person, QuestionAnswer, Email } from "@mui/icons-material";
-import axios from "axios";
-import { base_url } from "../utils/base_url";
 import UserInfo from "../components/UserInfo";
 import UserQuestions from "../components/UserQuestions";
 import UserAnswers from "../components/UserAnswers";
 import Navbar from "../components/Navbar";
 
 const Profile = () => {
-  const [user, setUser] = useState();
   const [section, setSection] = useState("profile");
-  useEffect(() => {
-    fetchUser();
-  }, []);
-  
-  const fetchUser = async () => {
-    try {
-      const response = await axios.get(`${base_url}/api/v1/user/profile`);
-      setUser(response.data.user);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+
   const handleMyQuestionsClick = async () => {
     setSection("questions");
   };
@@ -70,15 +56,13 @@ const Profile = () => {
       </Grid>
       <Grid item xs={10}>
         {section === "profile" ? (
-          <UserInfo user={user} />
+          <UserInfo />
         ) : section === "questions" ? (
-          <UserQuestions user={user} />
+          <UserQuestions />
         ) : (
           <UserAnswers />
         )}
       </Grid>
-
-      {/* Questions */}
     </Grid>
   );
 };

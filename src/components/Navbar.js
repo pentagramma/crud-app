@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import {
@@ -25,24 +25,32 @@ import Logout from "@mui/icons-material/Logout";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import ModalView from "./ModalView";
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [resetAI, setResetAI] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [isModalOpen,setIsModalOpen] = useState(false)
+  const user = useSelector((state) => state.user);
+  const [letter,setLetter]=useState('U')
   const navigate = useNavigate()
+
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleProfile = ()=>{
     handleClose()
     navigate('/profile');
   }
+
   const handleLogout = ()=>{
     handleClose()
     Cookies.remove('token')
@@ -50,6 +58,7 @@ const Navbar = () => {
     Cookies.remove('status')
     navigate('/login',{replace:true})
   }
+
   const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -65,6 +74,10 @@ const Navbar = () => {
       width: "20vw",
     },
   }));
+  
+  useEffect(()=>{
+    setLetter(user?.user?.firstName?.charAt(0).toUpperCase());
+  },[user])
 
   const SearchIconWrapper = styled("div")(({ theme }) => ({
     padding: theme.spacing(0, 2),
@@ -88,6 +101,7 @@ const Navbar = () => {
       },
     },
   }));
+
   return (
     <AppBar position="static" color="secondary">
       <Drawer
@@ -142,7 +156,7 @@ const Navbar = () => {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+              <Avatar sx={{ width: 32, height: 32 }}>{letter}</Avatar>
             </IconButton>
           </Tooltip>
         </Stack>
