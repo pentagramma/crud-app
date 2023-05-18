@@ -32,6 +32,7 @@ function UserQuestions() {
         `${base_url}/api/v1/questions/user?userId=${user._id}`
       );
       const data = response.data;
+      console.log(response.data)
       setQuestions(data.questions);
     } catch (error) {
       console.error("Error fetching questions:", error);

@@ -29,7 +29,7 @@ const Dashboard = () => {
         width: "100vw",
       }}
     >
-      <Navbar />
+      <Navbar page={true}/>
 
       <Box
         component="main"
