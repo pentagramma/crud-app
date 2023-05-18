@@ -6,7 +6,7 @@ import axios from "axios";
 import { base_url } from "../utils/base_url";
 import QuestionBox from "./QuestionBox";
 
-const QuestionList = () => {
+const QuestionList = ({page,setPageCount}) => {
   const questionArray = useSelector((state) => state.questions.questionArray);
   const questionReloadTrigger = useSelector((state) => state.extras.trigger);
   const dispatch = useDispatch();
@@ -15,15 +15,22 @@ const QuestionList = () => {
   useEffect(() => {
     setLoader(true);
     axios
-      .get(`${base_url}/api/v1/questions?skip=${1}&limit=10`)
+      .get(`${base_url}/api/v1/questions?skip=${page}&limit=10`)
       .then((response) => {
+        const total = response.data.totalCount
+        if(total<=10){
+            setPageCount(1)
+        }
+        else{
+            setPageCount(Math.ceil(total/10))
+        }
         dispatch(fetchQuestions(response.data.questions));
         setLoader(false);
       })
       .catch((e) => {
         console.log(e);
       });
-  }, [questionReloadTrigger]);
+  }, [questionReloadTrigger,page]);
 
   return (
     <>
