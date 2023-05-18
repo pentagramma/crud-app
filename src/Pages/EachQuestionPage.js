@@ -1,11 +1,21 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import { Box, Avatar, Divider, Typography, Button, Modal, TextField, MenuItem} from "@mui/material";
+import {
+  Box,
+  Avatar,
+  Divider,
+  Typography,
+  Button,
+  Modal,
+  TextField,
+  MenuItem,
+} from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import BotAvatar from "../images/bot-avatar.png";
 import LoadingImage from "../images/loading-gif.gif";
+import axios from "axios";
 
 let arr = [
   {
@@ -29,12 +39,27 @@ let arr = [
 ];
 
 const EachQuestionPage = () => {
-    const [isModalOpen,setIsModalOpen] = useState(false)
-    const [modalLoader,setModalLoader] = useState(false)
-    const [answer,setAnswer] = useState()
-    const handleSubmit = ()=>{
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalLoader, setModalLoader] = useState(false);
+  const [answerHelperText, setAnswerHelperText] = useState("");
+  const [answer, setAnswer] = useState("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (answer === "") {
+      setAnswerHelperText("Answer cannot be empty");
+    } else {
+      setAnswerHelperText("");
+      setModalLoader(true);
+      axios
+        .patch(``)
+        .then((response) => {
+          setModalLoader(false);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
+  };
   return (
     <Box
       bgcolor={"#ecf0f1"}
@@ -46,84 +71,93 @@ const EachQuestionPage = () => {
         width: "100vw",
       }}
     >
-        <Modal open={isModalOpen} onClose={()=>{setIsModalOpen(false)}}>
-        {modalLoader?
-      <Box
-      sx={{
-        width: "50vw",
-        height: "60vh",
-        backgroundColor: "white",
-        borderRadius: "10px",
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        boxShadow: 24,
-        padding: "20px",
-        display:'flex',
-        alignItems:'center',
-        justifyContent:'center'
-      }}
-    >
-        <Box width={"150px"} height={"150px"}>
-          <img src={LoadingImage} alt="loading-data" />
-        </Box>
-        </Box>
-        :
-        <Box
-          component={"form"}
-          onSubmit={handleSubmit}
-          sx={{
-            width: "50vw",
-            height: "60vh",
-            backgroundColor: "white",
-            borderRadius: "10px",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            boxShadow: 24,
-            padding: "20px",
-          }}
-        >
-          <TextField
-          multiline={true}
-            rows={13}
-            value={answer}
-            onChange={(e)=>{setAnswer(e.target.value)}}
-            sx={{ marginTop: "10px" }}
-            placeholder='Start your question with "What", "Why", "How", etc.'
-            variant="outlined"
-            color="secondary"
-            fullWidth
-          ></TextField>
-          <Button
-            type="submit"
-            variant="contained"
-            color="secondary"
+      <Modal
+        open={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
+      >
+        {modalLoader ? (
+          <Box
             sx={{
+              width: "50vw",
+              height: "60vh",
+              backgroundColor: "white",
+              borderRadius: "10px",
               position: "absolute",
-              right: "0",
-              bottom: "0",
-              marginRight: "20px",
-              marginBottom: "20px",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              boxShadow: 24,
+              padding: "20px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            Add Answer
-          </Button>
-        </Box>
-      }
-        </Modal>
+            <Box width={"150px"} height={"150px"}>
+              <img src={LoadingImage} alt="loading-data" />
+            </Box>
+          </Box>
+        ) : (
+          <Box
+            component={"form"}
+            onSubmit={handleSubmit}
+            sx={{
+              width: "50vw",
+              height: "60vh",
+              backgroundColor: "white",
+              borderRadius: "10px",
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              boxShadow: 24,
+              padding: "20px",
+            }}
+          >
+            <TextField
+              multiline={true}
+              rows={10}
+              value={answer}
+              onChange={(e) => {
+                setAnswer(e.target.value);
+              }}
+              sx={{ marginTop: "10px" }}
+              placeholder="Type your Answer..."
+              variant="outlined"
+              color="secondary"
+              fullWidth
+              helperText={answerHelperText}
+            ></TextField>
+            <Button
+              type="submit"
+              variant="contained"
+              color="secondary"
+              sx={{
+                position: "absolute",
+                right: "0",
+                bottom: "0",
+                marginRight: "20px",
+                marginBottom: "40px",
+              }}
+            >
+              Add Answer
+            </Button>
+          </Box>
+        )}
+      </Modal>
       <Navbar />
       <Box
         sx={{
-          marginLeft: "20vw",
-          marginTop: "10vh",
+          marginLeft: "25vw",
+          marginTop: "7vh",
           height: "70vh",
           overflowY: "scroll",
           "&::-webkit-scrollbar": {
             display: "none",
           },
+          width: "fit-content",
         }}
       >
         <Box
@@ -175,9 +209,10 @@ const EachQuestionPage = () => {
                 }}
                 variant={"h5"}
               >
-                What is you name absajbsf kasjfbkasbf kasjfbkajbfkjasbfajsflaf
-                fjkasbf aksfajbfkjasfbkafbkasfbkasbfkasfask kjabfkjabsfkbfajkb
-                asfnaks jasbfjkabfjb jasfjasbfjabf jasfkjafbasf
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nulla
+                modi soluta molestiae aliquid repellendus at voluptates repellat
+                minima, tenetur earum nihil, eum cum est consequatur ipsa,
+                architecto nam dignissimos quia?
               </Typography>
             </Box>
           </Box>
@@ -241,7 +276,13 @@ const EachQuestionPage = () => {
               </Box>
             </Box>
             <Box>
-              <Button variant="outlined" color="secondary" onClick={()=>{setIsModalOpen(true)}}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+              >
                 Answer this question
               </Button>
             </Box>
@@ -355,7 +396,7 @@ const EachQuestionPage = () => {
                       backgroundColor: "#9c27b0",
                     }}
                   >
-                    {each.postedBy.slice(0,1)}
+                    {each.postedBy.slice(0, 1)}
                   </Avatar>
                 </Box>
                 <Box
@@ -386,65 +427,65 @@ const EachQuestionPage = () => {
                 </Box>
               </Box>
               <Divider />
-          <Box
-            sx={{
-              width: "100%",
-              height: "7vh",
-              backgroundColor: "white",
-              padding: "10px",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                marginLeft: "10px",
-              }}
-            >
               <Box
                 sx={{
+                  width: "100%",
+                  height: "7vh",
+                  backgroundColor: "white",
+                  padding: "10px",
                   display: "flex",
-                  marginRight: "30px",
-                  height: "100%",
-                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
               >
-                <ThumbUpOffAltIcon
+                <Box
                   sx={{
-                    cursor: "pointer",
-                    color: "#9c27b0",
-                  }}
-                />
-                <Typography
-                  sx={{
+                    display: "flex",
                     marginLeft: "10px",
-                    fontSize: "12px",
-                    color: "#9c27b0",
                   }}
                 >
-                  {each.likes}
-                </Typography>
-              </Box>
-            </Box>
-            <Box
-                sx={{
-                  display: "flex",
-                  height: "100%",
-                  alignItems: "center",
-                }}
-              >
-                <AccessTimeFilledIcon />
-                <Typography
+                  <Box
+                    sx={{
+                      display: "flex",
+                      marginRight: "30px",
+                      height: "100%",
+                      alignItems: "center",
+                    }}
+                  >
+                    <ThumbUpOffAltIcon
+                      sx={{
+                        cursor: "pointer",
+                        color: "#9c27b0",
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        marginLeft: "10px",
+                        fontSize: "12px",
+                        color: "#9c27b0",
+                      }}
+                    >
+                      {each.likes}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
                   sx={{
-                    marginLeft: "10px",
-                    fontSize: "12px",
+                    display: "flex",
+                    height: "100%",
+                    alignItems: "center",
                   }}
                 >
-                  {each.time}
-                </Typography>
+                  <AccessTimeFilledIcon />
+                  <Typography
+                    sx={{
+                      marginLeft: "10px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    {each.time}
+                  </Typography>
+                </Box>
               </Box>
-          </Box>
             </Box>
           );
         })}
