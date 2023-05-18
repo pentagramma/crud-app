@@ -121,7 +121,7 @@ function UserInfo() {
                         zIndex: 1,
                       }}
                     >
-                      {user.firstName.charAt(0).toUpperCase()}
+                      {user.firstName?.charAt(0).toUpperCase()}
 
                       <IconButton
                         component="span"

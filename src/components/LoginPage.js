@@ -64,19 +64,10 @@ const LoginPage = () => {
               email: "",
               password: "",
             });
-
+            console.log(response)
             Cookies.set("token", response.data.token);
             Cookies.set("refresh-token", response.data.refresh_token);
             Cookies.set("status", "Y");
-          })
-          .then(() => {
-            const fetchUser = async () => {
-              const response = await axios.get(
-                `${base_url}/api/v1/user/profile`
-              );
-              dispatch(loginActions(response.data.user));
-            };
-            fetchUser();
             navigate("/", { replace: true });
           })
           .catch((error) => {
