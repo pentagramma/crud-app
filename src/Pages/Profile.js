@@ -36,7 +36,7 @@ const Profile = () => {
       minHeight: '100vh',
     }}
   >
-      <Navbar />
+      <Navbar page={false}/>
       <Box
         component="main"
         sx={{
