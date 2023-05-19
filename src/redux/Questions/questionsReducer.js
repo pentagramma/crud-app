@@ -1,16 +1,31 @@
-
 const initialState = {
-    questionArray:[]
-}
+  questionArray: [],
+ //questions:[]
+};
 
-const questionsReducer = (state = initialState,action)=>{
-    switch(action.type){
-        case "FETCH_QUESTIONS": return {
-            ...state,
-            questionArray: action.payload
+const questionsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case "FETCH_QUESTIONS":
+      return {
+        ...state,
+        questionArray: action.payload,
+      };
+    case "LIKE_QUESTION":
+  
+      const updatedQuestions = state.questionArray.map((question) => {
+        if (question._id === action.payload._id) {
+          return action.payload;
         }
-        default: return state
-    }
-}
+        return question;
+      });
 
-export default questionsReducer
+      return {
+        ...state,
+        questionArray: updatedQuestions,
+      };
+    default:
+      return state;
+  }
+};
+
+export default questionsReducer;

@@ -52,7 +52,7 @@ const EachQuestionPage = () => {
     ans_count:0,
     category:"",
     gpt_answer:"",
-    likes:0,
+    likes:[],
     postedBy:{
       firstName:""
     },
@@ -61,7 +61,7 @@ const EachQuestionPage = () => {
       postedBy:{
         firstName:""
       },
-      likes:"",
+      likes:[],
       timestamp:""
     }]
   });
@@ -312,7 +312,7 @@ const EachQuestionPage = () => {
                         color: "#9c27b0",
                       }}
                     >
-                      {questionData.likes}
+                      {questionData.likes?.length}
                     </Typography>
                   </Box>
                   <Box
@@ -520,7 +520,7 @@ const EachQuestionPage = () => {
                             color: "#9c27b0",
                           }}
                         >
-                          {each.likes}
+                          {each.likes?.length}
                         </Typography>
                       </Box>
                     </Box>

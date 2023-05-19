@@ -156,7 +156,7 @@ function UserQuestions({ questions }) {
                   fontSize: "12px",
                 }}
               >
-                {question.likes}
+                {question.likes?.length}
               </Typography>
             </Box>
             <Box
