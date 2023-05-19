@@ -131,7 +131,7 @@ function UserAnswers({ answers }) {
                     color: "#9c27b0",
                   }}
                 >
-                  {answer.likes}
+                  {answer.likes?.length}
                 </Typography>
               </Box>
               <Box
@@ -256,7 +256,7 @@ function UserAnswers({ answers }) {
                       color: "#9c27b0",
                     }}
                   >
-                    {each.likes}
+                    {each.likes?.length}
                   </Typography>
                 </Box>
               </Box>

@@ -5,9 +5,15 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { likeAnswer, likeQuestion } from "../redux/Questions/questionsActions";
+import axios from "axios";
+import { base_url } from "../utils/base_url";
 
 function QuestionBox({ each }) {
+  const dispatch = useDispatch();
   const navigate = useNavigate()
+  const user = useSelector((state) => state.user.user);
   const getTimeAgo = (createdAt) => {
     const distance = formatDistanceToNow(new Date(createdAt));
     if (distance == "less than a minute") return "Just now";
@@ -18,6 +24,25 @@ function QuestionBox({ each }) {
     return `${arr[1]} ${arr[2]} ago`;
   };
 
+  const handleLikeQuestion = async() => {
+    const response = await axios.post(`${base_url}/api/v1/questions/${each._id}/like`,{
+      userId:user._id
+    });
+    console.log(response.data)
+   // const updatedQuestion = response.data;
+  dispatch(likeQuestion(response.data));
+   // dispatch(likeQuestion(each._id));
+  };
+  // const fetchQuestionwithId =async(questionId)=>{
+  //   const response = await axios.post(`${base_url}/api/v1/questions/${questionId}/like`);
+  //   console.log(response.data)
+  //  // const updatedQuestion = response.data;
+  //   dispatch(likeQuestion(response.data));
+  // }
+
+  // const handleLikeAnswer = (answerId) => {
+  //   dispatch(likeAnswer(each._id, answerId));
+  // };
   const nextPageHandler = ()=>{
     navigate('/each-question',{state:each._id})
   }
@@ -50,7 +75,7 @@ function QuestionBox({ each }) {
             backgroundColor: "#9c27b0",
           }}
         >
-          {each.postedBy.firstName.slice(0, 1)}
+          {each.postedBy?.firstName?.slice(0, 1)}
         </Avatar>
       </Box>
       <Divider orientation="vertical" />
@@ -127,7 +152,7 @@ function QuestionBox({ each }) {
             display: "flex",
           }}
         >
-          <FavoriteIcon />
+          <FavoriteIcon onClick={handleLikeQuestion}/>
           <Typography
             gutterBottom
             sx={{
@@ -135,7 +160,7 @@ function QuestionBox({ each }) {
               fontSize: "12px",
             }}
           >
-            {each.likes}
+            {each.likes?.length}
           </Typography>
         </Box>
         <Box
