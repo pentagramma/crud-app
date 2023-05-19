@@ -16,7 +16,7 @@ import { base_url } from "../utils/base_url";
 import { useSelector } from "react-redux";
 import { checkFormData } from "../utils/updateUserValidation";
 
-function UserInfo() {
+function UserInfo({numberOfQuestions,numberOfAnswers}) {
   const [helperText, setHelperText] = useState({
     firstName: "",
     lastName: "",
@@ -130,14 +130,17 @@ function UserInfo() {
                           width: "150px",
                           height: "150px",
                           margin: "2px auto 16px",
+                          right:"8px",
                           position: "relative",
+                          backgroundColor: "#9c27b0",
+                         
                         }}
                         avatarStyle={{
                           position: "relative",
                           zIndex: 1,
                         }}
                       >
-                        {user.firstName.charAt(0).toUpperCase()}
+                        {user.firstName?.charAt(0).toUpperCase()}
 
                         <IconButton
                           component="span"
@@ -175,10 +178,10 @@ function UserInfo() {
                 </Typography>
                 <Typography variant="subtitle1">{user?.email}</Typography>
                 <Typography variant="subtitle1">
-                  Number of Questions posted:
+                  Number of Questions posted : {numberOfQuestions}
                 </Typography>
                 <Typography variant="subtitle1">
-                  Number of Answers: 5
+                  Number of Answers: {numberOfAnswers}
                 </Typography>
               </Box>
             </Paper>
