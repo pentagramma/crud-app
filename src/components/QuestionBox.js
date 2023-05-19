@@ -12,7 +12,7 @@ import { base_url } from "../utils/base_url";
 
 function QuestionBox({ each }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   const getTimeAgo = (createdAt) => {
     const distance = formatDistanceToNow(new Date(createdAt));
@@ -24,28 +24,21 @@ function QuestionBox({ each }) {
     return `${arr[1]} ${arr[2]} ago`;
   };
 
-  const handleLikeQuestion = async() => {
-    const response = await axios.post(`${base_url}/api/v1/questions/${each._id}/like`,{
-      userId:user._id
-    });
-    console.log(response.data)
-   // const updatedQuestion = response.data;
-  dispatch(likeQuestion(response.data));
-   // dispatch(likeQuestion(each._id));
+  const handleLikeQuestion = async () => {
+    const response = await axios.post(
+      `${base_url}/api/v1/questions/${each._id}/like`,
+      {
+        userId: user._id,
+      }
+    );
+    console.log(response.data);
+    dispatch(likeQuestion(response.data));
   };
-  // const fetchQuestionwithId =async(questionId)=>{
-  //   const response = await axios.post(`${base_url}/api/v1/questions/${questionId}/like`);
-  //   console.log(response.data)
-  //  // const updatedQuestion = response.data;
-  //   dispatch(likeQuestion(response.data));
-  // }
 
-  // const handleLikeAnswer = (answerId) => {
-  //   dispatch(likeAnswer(each._id, answerId));
-  // };
-  const nextPageHandler = ()=>{
-    navigate('/each-question',{state:each._id})
-  }
+ 
+  const nextPageHandler = () => {
+    navigate("/each-question", { state: each._id });
+  };
 
   return (
     <Box
@@ -75,7 +68,7 @@ function QuestionBox({ each }) {
             backgroundColor: "#9c27b0",
           }}
         >
-          {each.postedBy?.firstName?.slice(0, 1)}
+          {each.postedBy?.firstName?.charAt(0).toUpperCase()}
         </Avatar>
       </Box>
       <Divider orientation="vertical" />
@@ -152,7 +145,7 @@ function QuestionBox({ each }) {
             display: "flex",
           }}
         >
-          <FavoriteIcon onClick={handleLikeQuestion}/>
+          <FavoriteIcon onClick={handleLikeQuestion} />
           <Typography
             gutterBottom
             sx={{

@@ -22,6 +22,7 @@ import QuestionLoader from "../utils/QuestionLoader";
 import { useSelector, useDispatch } from "react-redux";
 import { triggerAnswerReload } from "../redux/Extras/extraActions";
 import Footer from "../components/Footer";
+import { likeAnswer } from "../redux/Questions/questionsActions";
 
 
 let arr = [
@@ -90,6 +91,20 @@ const EachQuestionPage = () => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+   const handleLikeAnswer = async(answerId) => {
+    console.log("answer liked")
+    const response = await axios.post(
+      `${base_url}/api/v1/questions/${questionData._id}/answers/${answerId}/like`,
+      {
+        userId: user._id,
+      }
+    );
+    console.log(response.data);
+ //   dispatch(likeQuestion(response.data));
+    dispatch(likeAnswer(response.data)); 
+
   };
 
   const handleSubmit = (e) => {
@@ -253,7 +268,7 @@ const EachQuestionPage = () => {
                       backgroundColor: "#9c27b0",
                     }}
                   >
-                    h
+                  {questionData?.postedBy.firstName?.charAt(0).toUpperCase()}
                   </Avatar>
                 </Box>
                 <Box
@@ -452,7 +467,7 @@ const EachQuestionPage = () => {
                           backgroundColor: "#9c27b0",
                         }}
                       >
-                        {each.postedBy.firstName.slice(0, 1)}
+                        {each.postedBy.firstName?.charAt(0).toUpperCase()}
                       </Avatar>
                     </Box>
                     <Box
@@ -512,6 +527,7 @@ const EachQuestionPage = () => {
                             cursor: "pointer",
                             color: "#9c27b0",
                           }}
+                          onClick={()=>handleLikeAnswer(each._id)}
                         />
                         <Typography
                           sx={{
