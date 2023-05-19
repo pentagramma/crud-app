@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Box,
@@ -52,7 +52,6 @@ function UserInfo({numberOfQuestions,numberOfAnswers}) {
        formData
       ).then(()=>{
         setUrl(`${base_url}/${user.imageUrl}`)
-        console.log(`${base_url}/${user.imageUrl}`)
       })
        
     
@@ -67,8 +66,6 @@ function UserInfo({numberOfQuestions,numberOfAnswers}) {
     e.preventDefault();
     setErr(false);
     const validationResult = checkFormData(formDatas, user);
-    console.log(formDatas);
-    console.log(validationResult);
     setHelperText({
       firstName: "",
       lastName: "",

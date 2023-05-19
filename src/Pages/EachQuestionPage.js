@@ -8,7 +8,6 @@ import {
   Button,
   Modal,
   TextField,
-  MenuItem,
 } from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
@@ -22,58 +21,39 @@ import QuestionLoader from "../utils/QuestionLoader";
 import { useSelector, useDispatch } from "react-redux";
 import { triggerAnswerReload } from "../redux/Extras/extraActions";
 import Footer from "../components/Footer";
-import { likeAnswer } from "../redux/Questions/questionsActions";
-
-
-let arr = [
-  {
-    answer: "I'm good",
-    postedBy: "name",
-    time: "2 days ago",
-    likes: 32,
-  },
-  {
-    answer: "I'm good",
-    postedBy: "name",
-    time: "2 days ago",
-    likes: 32,
-  },
-  {
-    answer: "I'm good",
-    postedBy: "name",
-    time: "2 days ago",
-    likes: 32,
-  },
-];
 
 const EachQuestionPage = () => {
   const location = useLocation();
   const [questionData, setQuestionData] = useState({
-    question:"",
-    ans_count:0,
-    category:"",
-    gpt_answer:"",
-    likes:[],
-    postedBy:{
-      firstName:""
+    question: "",
+    ans_count: 0,
+    category: "",
+    gpt_answer: "",
+    likes: [],
+    postedBy: {
+      firstName: "",
     },
-    answers:[{
-      answer:"",
-      postedBy:{
-        firstName:""
+    answers: [
+      {
+        answer: "",
+        postedBy: {
+          firstName: "",
+        },
+        likes: [],
+        timestamp: "",
       },
-      likes:[],
-      timestamp:""
-    }]
+    ],
   });
   const [loader, setLoader] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalLoader, setModalLoader] = useState(false);
   const [answerHelperText, setAnswerHelperText] = useState("");
   const [answer, setAnswer] = useState("");
+  const [checkLike,setCheckLike] = useState(false)
+  const [like,setLike] = useState(0)
   const user = useSelector((state) => state.user.user);
-  const answerTrigger = useSelector((state)=>state.extras.triggerAnswer)
-  const dispatch = useDispatch()
+  const answerTrigger = useSelector((state) => state.extras.triggerAnswer);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setLoader(true);
@@ -85,26 +65,40 @@ const EachQuestionPage = () => {
       .get(`${base_url}/api/v1/questions/${location.state}`)
       .then((response) => {
         setQuestionData(response.data.question);
+        setLike(response.data.question.likes.length)
         setLoader(false);
-        console.log(response)
+        // console.log(response);
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-   const handleLikeAnswer = async(answerId) => {
-    console.log("answer liked")
+  const handleLikeAnswer = async (answerId) => {
+    // console.log("answer liked");
     const response = await axios.post(
       `${base_url}/api/v1/questions/${questionData._id}/answers/${answerId}/like`,
       {
         userId: user._id,
       }
     );
-    console.log(response.data);
- //   dispatch(likeQuestion(response.data));
-    dispatch(likeAnswer(response.data)); 
-
+    // console.log(response.data);
+  };
+  const handleLikeQuestion = async () => {
+    const response = await axios.post(
+      `${base_url}/api/v1/questions/${questionData._id}/like`,
+      {
+        userId: user._id,
+      }
+    );
+    // console.log(response.data);
+    setLike(response.data.likes.length);
+    if(response.data.likes.includes(user._id)){
+      setCheckLike(true)
+    }
+    else{
+      setCheckLike(false)
+    }
   };
 
   const handleSubmit = (e) => {
@@ -115,15 +109,15 @@ const EachQuestionPage = () => {
       setAnswerHelperText("");
       setModalLoader(true);
       axios
-        .patch(`${base_url}/api/v1/questions/answers/${questionData._id}`,{
-          answer:answer,
-          postedBy:user._id
+        .patch(`${base_url}/api/v1/questions/answers/${questionData._id}`, {
+          answer: answer,
+          postedBy: user._id,
         })
         .then((response) => {
-          setAnswer("")
+          setAnswer("");
           setModalLoader(false);
           setIsModalOpen(false);
-          dispatch(triggerAnswerReload())
+          dispatch(triggerAnswerReload());
         })
         .catch((err) => {
           console.log(err);
@@ -139,7 +133,7 @@ const EachQuestionPage = () => {
         top: "0",
         position: "absolute",
         width: "100vw",
-        height: "fit-content"
+        height: "fit-content",
       }}
     >
       <Modal
@@ -229,7 +223,7 @@ const EachQuestionPage = () => {
             display: "none",
           },
           width: "fit-content",
-          marginBottom:'40px'
+          marginBottom: "40px",
         }}
       >
         {loader ? (
@@ -268,7 +262,7 @@ const EachQuestionPage = () => {
                       backgroundColor: "#9c27b0",
                     }}
                   >
-                  {questionData?.postedBy.firstName?.charAt(0).toUpperCase()}
+                    {questionData?.postedBy.firstName?.charAt(0).toUpperCase()}
                   </Avatar>
                 </Box>
                 <Box
@@ -314,12 +308,23 @@ const EachQuestionPage = () => {
                       alignItems: "center",
                     }}
                   >
-                    <ThumbUpOffAltIcon
-                      sx={{
-                        cursor: "pointer",
-                        color: "#9c27b0",
-                      }}
-                    />
+                    {checkLike ? (
+                      <ThumbUpAltIcon
+                        sx={{
+                          cursor: "pointer",
+                          color: "#9c27b0",
+                        }}
+                        onClick={handleLikeQuestion}
+                      />
+                    ) : (
+                      <ThumbUpOffAltIcon
+                        sx={{
+                          cursor: "pointer",
+                          color: "#9c27b0",
+                        }}
+                        onClick={handleLikeQuestion}
+                      />
+                    )}
                     <Typography
                       sx={{
                         marginLeft: "10px",
@@ -327,7 +332,7 @@ const EachQuestionPage = () => {
                         color: "#9c27b0",
                       }}
                     >
-                      {questionData.likes?.length}
+                      {like}
                     </Typography>
                   </Box>
                   <Box
@@ -431,7 +436,8 @@ const EachQuestionPage = () => {
                 marginBottom: "10px",
               }}
             >
-              {questionData.answers.length} community {questionData.answers.length<2?"answer":"answers"}
+              {questionData.answers.length} community{" "}
+              {questionData.answers.length < 2 ? "answer" : "answers"}
             </Typography>
             {questionData.answers.map((each) => {
               return (
@@ -527,7 +533,7 @@ const EachQuestionPage = () => {
                             cursor: "pointer",
                             color: "#9c27b0",
                           }}
-                          onClick={()=>handleLikeAnswer(each._id)}
+                          onClick={() => handleLikeAnswer(each._id)}
                         />
                         <Typography
                           sx={{
@@ -564,7 +570,7 @@ const EachQuestionPage = () => {
           </>
         )}
       </Box>
-      <Footer/>
+      <Footer />
     </Box>
   );
 };

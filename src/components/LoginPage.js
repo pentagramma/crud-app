@@ -14,10 +14,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { checkFormData } from "../utils/loginValidation";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { base_url } from "../utils/base_url";
 import Cookies from "js-cookie";
-import { loginActions } from "../redux/Login/loginActions";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -63,7 +61,7 @@ const LoginPage = () => {
               email: "",
               password: "",
             });
-            console.log(response)
+            // console.log(response)
             Cookies.set("token", response.data.token);
             Cookies.set("refresh-token", response.data.refresh_token);
             Cookies.set("status", "Y");

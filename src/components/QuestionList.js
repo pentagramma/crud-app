@@ -8,13 +8,10 @@ import QuestionBox from "./QuestionBox";
 
 const QuestionList = ({page,setPageCount,category}) => {
   const questionArray = useSelector((state) => state.questions.questionArray);
-  const question = useSelector((state) => state.questions);
   const questionReloadTrigger = useSelector((state) => state.extras.trigger);
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(false);
-
   useEffect(() => {
-    console.log(question)
     setLoader(true);
     axios
       .get(`${base_url}/api/v1/questions?skip=${page}&limit=10&category=${category!==""?category:""}`)
@@ -27,7 +24,6 @@ const QuestionList = ({page,setPageCount,category}) => {
             setPageCount(Math.ceil(total/10))
         }
         dispatch(fetchQuestions(response.data.questions));
-        
         setLoader(false);
       })
       .catch((e) => {

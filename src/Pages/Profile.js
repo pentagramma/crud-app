@@ -7,7 +7,7 @@ import {
   ListItemText,
   ListItemIcon,
 } from "@mui/material";
-import { Person, QuestionAnswer, Email, FoodBank } from "@mui/icons-material";
+import { Person, QuestionAnswer, Email } from "@mui/icons-material";
 import UserInfo from "../components/UserInfo";
 import UserQuestions from "../components/UserQuestions";
 import UserAnswers from "../components/UserAnswers";
@@ -35,7 +35,7 @@ const Profile = () => {
       );
       const data = response.data;
       setQuestions(data.questions);
-      console.log(response.data);
+      // console.log(response.data);
      
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -48,7 +48,7 @@ const Profile = () => {
         `${base_url}/api/v1/questions/answers/user?userId=${user._id}`
       );
       const data = response.data;
-      console.log(response.data)
+      // console.log(response.data)
       setAnswers(data);
     } catch (error) {
       console.error("Error fetching answers:", error);
