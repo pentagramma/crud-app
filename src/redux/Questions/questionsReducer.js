@@ -1,6 +1,6 @@
 const initialState = {
   questionArray: [],
- //questions:[]
+  //questions:[]
 };
 
 const questionsReducer = (state = initialState, action) => {
@@ -11,7 +11,7 @@ const questionsReducer = (state = initialState, action) => {
         questionArray: action.payload,
       };
     case "LIKE_QUESTION":
-  
+    case "LIKE_ANSWER":
       const updatedQuestions = state.questionArray.map((question) => {
         if (question._id === action.payload._id) {
           return action.payload;
