@@ -1,22 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Avatar, Box, Divider, Typography } from "@mui/material";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import { likeAnswer, likeQuestion } from "../redux/Questions/questionsActions";
-import axios from "axios";
-import { base_url } from "../utils/base_url";
 
 function QuestionBox({ each }) {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user.user);
   const getTimeAgo = (createdAt) => {
     const distance = formatDistanceToNow(new Date(createdAt));
-    if (distance == "less than a minute") return "Just now";
+    if (distance === "less than a minute") return "Just now";
     const arr = distance.split(" ");
     if (arr.length === 2) {
       return `${arr[0]} ${arr[1]} ago`;
@@ -24,18 +18,6 @@ function QuestionBox({ each }) {
     return `${arr[1]} ${arr[2]} ago`;
   };
 
-  const handleLikeQuestion = async () => {
-    const response = await axios.post(
-      `${base_url}/api/v1/questions/${each._id}/like`,
-      {
-        userId: user._id,
-      }
-    );
-    console.log(response.data);
-    dispatch(likeQuestion(response.data));
-  };
-
- 
   const nextPageHandler = () => {
     navigate("/each-question", { state: each._id });
   };
@@ -145,7 +127,7 @@ function QuestionBox({ each }) {
             display: "flex",
           }}
         >
-          <FavoriteIcon onClick={handleLikeQuestion} />
+          <FavoriteIcon/>
           <Typography
             gutterBottom
             sx={{
@@ -153,7 +135,7 @@ function QuestionBox({ each }) {
               fontSize: "12px",
             }}
           >
-            {each.likes?.length}
+            {each.likes.length}
           </Typography>
         </Box>
         <Box

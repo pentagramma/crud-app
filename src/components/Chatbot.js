@@ -64,7 +64,7 @@ const AIResult = ({ steps, triggerNextStep }) => {
       axios
         .get(`${base_url}/api/v1/chatbot/${steps.search.value}`)
         .then((response) => {
-            console.log(response.data.message)
+            // console.log(response.data.message)
           setLoading(false);
           setAnswer(response.data.message);
           triggerNextStep();
