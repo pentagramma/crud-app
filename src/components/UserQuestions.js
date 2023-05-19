@@ -3,17 +3,18 @@ import { Avatar, Box, Divider, Typography } from "@mui/material";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
-import axios from "axios";
-import { base_url } from "../utils/base_url";
 import { formatDistanceToNow } from "date-fns";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
-function UserQuestions() {
-  const [questions, setQuestions] = useState([]);
+function UserQuestions({ questions }) {
   const user = useSelector((state) => state.user.user);
-  
+  const [flag, setFlag] = useState(false);
   useEffect(() => {
-    fetchQuestionsByUserId();
+    if (questions.length > 0) {
+      setFlag(true);
+    } else {
+      setFlag(false);
+    }
   }, []);
 
   const getTimeAgo = (createdAt) => {
@@ -26,20 +27,21 @@ function UserQuestions() {
     return `${arr[1]} ${arr[2]} ago`;
   };
 
-  const fetchQuestionsByUserId = async () => {
-    try {
-      const response = await axios.get(
-        `${base_url}/api/v1/questions/user?userId=${user._id}`
-      );
-      const data = response.data;
-      console.log(response.data)
-      setQuestions(data.questions);
-    } catch (error) {
-      console.error("Error fetching questions:", error);
-    }
-  };
-
-  return (
+  return !flag ? (
+    <Box
+      sx={{
+        backgroundColor: "#f5f5f5",
+        padding: "1rem",
+        marginBottom: "1rem",
+        borderRadius: "4px",
+        marginLeft: "3%",
+      }}
+    >
+      <Typography variant="h5" align="center">
+        Oops!! No Questions Posted yet!!
+      </Typography>
+    </Box>
+  ) : (
     <Box component="main" sx={{ flexGrow: 1, p: 3, m: 7 }}>
       {questions.map((question) => (
         <Box
