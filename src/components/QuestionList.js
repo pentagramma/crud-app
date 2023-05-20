@@ -11,6 +11,8 @@ const QuestionList = ({page,setPageCount,category}) => {
   const questionReloadTrigger = useSelector((state) => state.extras.trigger);
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(false);
+  const [noq,setNoq]=useState(0)
+  const [noa,setNoa]=useState(0)
   useEffect(() => {
     setLoader(true);
     axios
@@ -31,6 +33,7 @@ const QuestionList = ({page,setPageCount,category}) => {
       });
   }, [questionReloadTrigger,page,category]);
   
+
 
   return (
     <>
