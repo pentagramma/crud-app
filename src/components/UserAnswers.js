@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Box, Avatar, Divider, Typography } from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
+import { useSelector } from "react-redux";
 
 function UserAnswers({ answers }) {
   const [flag, setFlag] = useState(false);
+  const user = useSelector((state) => state.user.user);
   useEffect(() => {
     if (answers.length > 0) {
       setFlag(true);
@@ -72,7 +74,7 @@ function UserAnswers({ answers }) {
                   backgroundColor: "#9c27b0",
                 }}
               >
-                h
+                {answer.postedBy?.firstName?.charAt(0).toUpperCase()}
               </Avatar>
             </Box>
             <Box
@@ -154,7 +156,7 @@ function UserAnswers({ answers }) {
             </Box>
           </Box>
         </Box>
-
+        
         {answer.answers.map((each) => (
           <Box
             sx={{
@@ -166,11 +168,13 @@ function UserAnswers({ answers }) {
               marginBottom: "20px",
             }}
           >
+            {each.postedBy._id===user._id && (<>
             <Box
               sx={{
                 display: "flex",
               }}
             >
+             
               <Box
                 sx={{
                   marginRight: "5px",
@@ -278,6 +282,8 @@ function UserAnswers({ answers }) {
                 </Typography>
               </Box>
             </Box>
+            </>
+        )}
           </Box>
         ))}
       </Box>

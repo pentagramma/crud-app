@@ -5,9 +5,11 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
 import { formatDistanceToNow } from "date-fns";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function UserQuestions({ questions }) {
   const user = useSelector((state) => state.user.user);
+  const navigate=useNavigate()
   const [flag, setFlag] = useState(false);
   useEffect(() => {
     if (questions.length > 0) {
@@ -25,6 +27,9 @@ function UserQuestions({ questions }) {
       return `${arr[0]} ${arr[1]} ago`;
     }
     return `${arr[1]} ${arr[2]} ago`;
+  };
+  const nextPageHandler = (questionId) => {
+    navigate("/each-question", { state: questionId });
   };
 
   return !flag ? (
@@ -99,6 +104,7 @@ function UserQuestions({ questions }) {
                   textDecoration: "underline",
                 },
               }}
+              onClick={()=>nextPageHandler(question._id)}
               variant={"h5"}
             >
               {question.question}

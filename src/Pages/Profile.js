@@ -48,7 +48,7 @@ const Profile = () => {
         `${base_url}/api/v1/questions/answers/user?userId=${user._id}`
       );
       const data = response.data;
-      // console.log(response.data)
+      console.log(response.data)
       setAnswers(data);
     } catch (error) {
       console.error("Error fetching answers:", error);
