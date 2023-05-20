@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Dashboard from "./components/Dashboard";
-import LoginPage from "./components/LoginPage";
-import SignUp from "./components/SignupPage";
+import Dashboard from "./Pages/Dashboard";
+import LoginPage from "./Pages/LoginPage";
+import SignUp from "./Pages/SignupPage";
 import LoginAuth from "./utils/LoginAuth";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
@@ -11,9 +11,6 @@ import { base_url } from "./utils/base_url";
 import { Navigate } from "react-router-dom";
 import Profile from "./Pages/Profile";
 import EachQuestionPage from "./Pages/EachQuestionPage";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { loginActions } from "./redux/Login/loginActions";
 
 axios.interceptors.request.use(
   async (request) => {
@@ -49,21 +46,6 @@ axios.interceptors.request.use(
 );
 
 function App() {
-  // console.log("app here")
-  // const dispatch = useDispatch()
-  // useEffect(() => {
-  //   if (Cookies.get("isLoggedIn")) {
-  //     axios
-  //       .get(`${base_url}/api/v1/user/profile`)
-  //       .then((response) => {
-  //         console.log(response.data.user)
-  //         dispatch(loginActions(response.data.user))
-  //       })
-  //       .catch((e) => {
-  //         console.log(e)
-  //       });
-  //   }
-  // }, []);
   return (
     <>
       <Routes>
