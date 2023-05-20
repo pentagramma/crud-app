@@ -11,7 +11,9 @@ import { base_url } from "./utils/base_url";
 import { Navigate } from "react-router-dom";
 import Profile from "./Pages/Profile";
 import EachQuestionPage from "./Pages/EachQuestionPage";
-import Footer from "./components/Footer";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { loginActions } from "./redux/Login/loginActions";
 
 axios.interceptors.request.use(
   async (request) => {
@@ -34,6 +36,7 @@ axios.interceptors.request.use(
         request.headers["refresh-token"] = Cookies.get("refresh-token");
       } catch (err) {
         console.log("refreshtoken error", err);
+        Cookies.remove("isLoggedIn");
         <Navigate to={"/login"} />;
       }
     }
@@ -46,6 +49,21 @@ axios.interceptors.request.use(
 );
 
 function App() {
+  // console.log("app here")
+  // const dispatch = useDispatch()
+  // useEffect(() => {
+  //   if (Cookies.get("isLoggedIn")) {
+  //     axios
+  //       .get(`${base_url}/api/v1/user/profile`)
+  //       .then((response) => {
+  //         console.log(response.data.user)
+  //         dispatch(loginActions(response.data.user))
+  //       })
+  //       .catch((e) => {
+  //         console.log(e)
+  //       });
+  //   }
+  // }, []);
   return (
     <>
       <Routes>
@@ -69,7 +87,15 @@ function App() {
         />
         <Route exact path="/login" element={<LoginPage />} />
         <Route exact path="/signup" element={<SignUp />} />
-        <Route exact path="/each-question" element={<LoginAuth><EachQuestionPage/></LoginAuth>} />
+        <Route
+          exact
+          path="/each-question"
+          element={
+            <LoginAuth>
+              <EachQuestionPage />
+            </LoginAuth>
+          }
+        />
       </Routes>
     </>
   );
