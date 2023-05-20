@@ -21,6 +21,7 @@ import QuestionLoader from "../utils/QuestionLoader";
 import { useSelector, useDispatch } from "react-redux";
 import { triggerAnswerReload } from "../redux/Extras/extraActions";
 import Footer from "../components/Footer";
+import { loginActions } from "../redux/Login/loginActions";
 
 const EachQuestionPage = () => {
   const location = useLocation();
@@ -59,6 +60,18 @@ const EachQuestionPage = () => {
     setLoader(true);
     fetchQuestion();
   }, [answerTrigger]);
+
+  useEffect(()=>{
+    console.log(user.likedQuestions)
+    console.log(location.state)
+    if(user.likedQuestions.includes(location.state)){
+      console.log("yes")
+      setCheckLike(true)
+    }
+    else{
+      setCheckLike(false)
+    }
+  },[])
 
   const fetchQuestion = async () => {
     await axios

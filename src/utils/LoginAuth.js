@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 
 
 const LoginAuth = ({ children }) => {
+  console.log('coming to auth')
   const dispatch = useDispatch()
   const [check,setCheck] = useState(true)
   useEffect(()=>{
@@ -17,9 +18,7 @@ const LoginAuth = ({ children }) => {
     await axios
     .get(`${base_url}/api/v1/user/profile`)
     .then((response) => {
-      console.log(response)
       dispatch(loginActions(response.data.user));
-      // setCheck(true)
     }).then(()=>{
       setCheck(true)
     })
