@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Dashboard from "./components/Dashboard";
-import LoginPage from "./components/LoginPage";
-import SignUp from "./components/SignupPage";
+import Dashboard from "./Pages/Dashboard";
+import LoginPage from "./Pages/LoginPage";
+import SignUp from "./Pages/SignupPage";
 import LoginAuth from "./utils/LoginAuth";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
@@ -11,7 +11,6 @@ import { base_url } from "./utils/base_url";
 import { Navigate } from "react-router-dom";
 import Profile from "./Pages/Profile";
 import EachQuestionPage from "./Pages/EachQuestionPage";
-import Footer from "./components/Footer";
 
 axios.interceptors.request.use(
   async (request) => {
@@ -34,6 +33,7 @@ axios.interceptors.request.use(
         request.headers["refresh-token"] = Cookies.get("refresh-token");
       } catch (err) {
         console.log("refreshtoken error", err);
+        Cookies.remove("isLoggedIn");
         <Navigate to={"/login"} />;
       }
     }
@@ -69,7 +69,15 @@ function App() {
         />
         <Route exact path="/login" element={<LoginPage />} />
         <Route exact path="/signup" element={<SignUp />} />
-        <Route exact path="/each-question" element={<LoginAuth><EachQuestionPage/></LoginAuth>} />
+        <Route
+          exact
+          path="/each-question"
+          element={
+            <LoginAuth>
+              <EachQuestionPage />
+            </LoginAuth>
+          }
+        />
       </Routes>
     </>
   );

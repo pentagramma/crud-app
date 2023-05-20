@@ -16,6 +16,7 @@ import {
   ListItemAvatar,
   ListItemText,
 } from "@mui/material";
+import LoaderComponent from '../images/loader-component-gif.gif'
 
 function QuestionBox({ each }) {
   const user = {
@@ -37,6 +38,7 @@ function QuestionBox({ each }) {
   const [likedUsers, setLikedUsers] = useState([]);
   const [numberOfQuestions,setNoq]=useState(0);
   const [numberOfAnswers,setNoa]=useState(0);
+  const [popoverLoader,setPopoverLoader] = useState(false)
   const getTimeAgo = (createdAt) => {
     const distance = formatDistanceToNow(new Date(createdAt));
     if (distance === "less than a minute") return "Just now";
@@ -53,6 +55,7 @@ function QuestionBox({ each }) {
       const response = await axios.get(
         `${base_url}/api/v1/questions/likes/${each._id}`
       );
+      setPopoverLoader(false)
       setLikedUsers(response.data);
     } catch (error) {
       console.error(error);
@@ -83,6 +86,7 @@ function QuestionBox({ each }) {
       const response = await axios.get(
         `${base_url}/api/v1/questions/answers/user?userId=${each.postedBy._id}`
       );
+      setPopoverLoader(false)
       const data = response.data;
       //console.log(response.data)
       setNoa(response.data.length)
@@ -93,6 +97,7 @@ function QuestionBox({ each }) {
     }
   }
   const userInfloClickHandler = (event) => {
+    setPopoverLoader(true)
     fetchQuestionsByUserId();
     fetchAnswersByUserId();
     setAnchorElUser(event.currentTarget);
@@ -106,6 +111,7 @@ function QuestionBox({ each }) {
   };
 
   const handleOpenPopover = (event) => {
+    setPopoverLoader(true)
     fetchLikedUsers();
     setAnchorEl(event.currentTarget);
   };
@@ -250,6 +256,15 @@ function QuestionBox({ each }) {
               }}
             >
               <Box sx={{ p: 2, backgroundColor: "#e5e7eb" }}>
+                {popoverLoader?
+                <Box sx={{
+                  width:'70px',
+                  height:'70px'
+                }}>
+                  <img src={LoaderComponent} alt='loading....'/>
+                </Box>
+                :
+                <>
                 <Box
                   sx={{
                     display: "flex",
@@ -313,6 +328,8 @@ function QuestionBox({ each }) {
                     </ListItem>
                   ))}
                 </List>
+                </>
+                }
               </Box>
             </Popover>
           )}
@@ -349,6 +366,15 @@ function QuestionBox({ each }) {
         }}
       >
         <Box sx={{ p: 3, maxWidth: 300, borderRadius: "2rem" }}>
+        {popoverLoader?
+        <Box sx={{
+          width:'70px',
+          height:'70px'
+        }}>
+          <img src={LoaderComponent} alt='loading....'/>
+        </Box>
+        :
+                <>
           <Grid container spacing={2} alignItems="center">
             <Grid item>
               <Avatar
@@ -393,6 +419,7 @@ function QuestionBox({ each }) {
               </Typography>
             )}
           </Box>
+          </>}
         </Box>
       </Popover>
     </Box>

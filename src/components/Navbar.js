@@ -56,6 +56,8 @@ const Navbar = ({page}) => {
     Cookies.remove('token')
     Cookies.remove('refresh-token')
     Cookies.remove('status')
+    Cookies.remove('isLoggedIn')
+    Cookies.remove('user')
     navigate('/login',{replace:true})
   }
 
