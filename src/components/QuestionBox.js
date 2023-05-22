@@ -65,10 +65,6 @@ function QuestionBox({ each }) {
       const response = await axios.get(
         `${base_url}/api/v1/questions/user?userId=${each.postedBy._id}`
       );
-      const data = response.data;
-      //setQuestions(data.questions);
-      console.log("dcsd")
-       console.log(response.data);
       setNoq(response.data.questions.length)
      
     } catch (error) {
@@ -83,10 +79,7 @@ function QuestionBox({ each }) {
       const response = await axios.get(
         `${base_url}/api/v1/questions/answers/user?userId=${each.postedBy._id}`
       );
-      const data = response.data;
-      //console.log(response.data)
       setNoa(response.data.length)
-     // setAnswers(data);
     } catch (error) {
       console.error("Error fetching answers:", error);
       return 0
