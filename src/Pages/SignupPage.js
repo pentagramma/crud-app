@@ -118,6 +118,7 @@ export default function SignUp() {
                   value={formData.firstName}
                   onChange={inputChangeHandler}
                   helperText={helperText.firstName}
+                  color={"secondary"}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -131,6 +132,7 @@ export default function SignUp() {
                   value={formData.lastName}
                   onChange={inputChangeHandler}
                   helperText={helperText.lastName}
+                  color={"secondary"}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -144,6 +146,7 @@ export default function SignUp() {
                   value={formData.email}
                   onChange={inputChangeHandler}
                   helperText={helperText.email}
+                  color={"secondary"}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -157,6 +160,7 @@ export default function SignUp() {
                   value={formData.password}
                   onChange={inputChangeHandler}
                   helperText={helperText.password}
+                  color={"secondary"}
                 />
               </Grid>
             </Grid>
@@ -165,12 +169,13 @@ export default function SignUp() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              color={"secondary"}
             >
               Sign Up
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link to={"/login"} style={{ color: "blue" }}>
+                <Link to={"/login"} color={"secondary"}>
                   Already have an account? Sign in
                 </Link>
               </Grid>
