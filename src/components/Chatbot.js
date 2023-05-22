@@ -5,17 +5,22 @@ import ChatBot from "react-simple-chatbot";
 import { base_url } from "../utils/base_url";
 import LoadingImage from "../images/loading-gif.gif";
 import BotAvatar from "../images/bot-avatar.png";
+import { ThemeProvider } from "styled-components";
+
+const CHATBOT_THEME = {
+  headerBgColor: "#9c27b0",
+  headerFontColor: "#fff",
+  botBubbleColor: "#9c27b0",
+  botFontColor: "#fff",
+  userBubbleColor: "#9c27b0",
+  userFontColor: "#fff",
+};
 
 const Chatbot = () => {
   let steps = [
     {
       id: "1",
-      message: "Hello! My name is Chunnu. Welcome to Q&AI!",
-      trigger: "2",
-    },
-    {
-      id: "2",
-      message: "I'm your friendly neighbourhood AI! <3",
+      message: "Hello! My name is Ada. Welcome to Q&AI!",
       trigger: "3",
     },
     {
@@ -43,6 +48,7 @@ const Chatbot = () => {
   ];
   return (
     <>
+    <ThemeProvider theme={CHATBOT_THEME}>
       <ChatBot
         steps={steps}
         width="95%"
@@ -50,7 +56,9 @@ const Chatbot = () => {
         userDelay={0}
         customDelay={0}
         botAvatar={BotAvatar}
+        headerTitle="Q&AI"
       />
+      </ThemeProvider>
     </>
   );
 };

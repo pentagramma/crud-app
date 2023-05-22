@@ -84,7 +84,7 @@ const LoginPage = () => {
     }
   };
   return (
-    <Box className="bg-gradient-to-r from-sky-500 to-indigo-500 w-screen h-screen flex justify-center items-center flex-col">
+    <Box className="bg-gradient-to-r from-fuchsia-800 to-fuchsia-800 w-screen h-screen flex justify-center items-center flex-col">
       <Box
         sx={{
           display: "flex",
@@ -99,7 +99,7 @@ const LoginPage = () => {
           borderRadius: "10px",
         }}
       >
-        <Typography variant="h5" fontWeight={"600"} color={"primary"}>
+        <Typography variant="h5" fontWeight={"600"} color={"secondary"}>
           Q&AI
         </Typography>
         <Typography>Introducing AI to your community</Typography>
@@ -155,6 +155,7 @@ const LoginPage = () => {
               value={formData.email}
               onChange={inputUpdateHandler}
               helperText={helperText.email}
+              color="secondary"
             />
             <TextField
               margin="normal"
@@ -167,19 +168,21 @@ const LoginPage = () => {
               value={formData.password}
               onChange={inputUpdateHandler}
               helperText={helperText.password}
+              color="secondary"
             />
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              color="secondary"
             >
               Sign In
             </Button>
             <Grid container>
               <Grid item xs></Grid>
               <Grid item>
-                <Link to={"/signup"} style={{ color: "blue" }}>
+                <Link color="secondary" to={"/signup"}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
