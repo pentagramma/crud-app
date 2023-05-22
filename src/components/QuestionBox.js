@@ -68,10 +68,6 @@ function QuestionBox({ each }) {
       const response = await axios.get(
         `${base_url}/api/v1/questions/user?userId=${each.postedBy._id}`
       );
-      const data = response.data;
-      //setQuestions(data.questions);
-      console.log("dcsd")
-       console.log(response.data);
       setNoq(response.data.questions.length)
      
     } catch (error) {
