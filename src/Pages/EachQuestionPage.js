@@ -21,6 +21,9 @@ import QuestionLoader from "../utils/QuestionLoader";
 import { useSelector, useDispatch } from "react-redux";
 import { triggerAnswerReload } from "../redux/Extras/extraActions";
 import Footer from "../components/Footer";
+import { loginActions } from "../redux/Login/loginActions";
+import EachAnswer from "../components/EachAnswer";
+import Cookies from "js-cookie";
 
 const EachQuestionPage = () => {
   const location = useLocation();
@@ -60,6 +63,15 @@ const EachQuestionPage = () => {
     fetchQuestion();
   }, [answerTrigger]);
 
+  useEffect(()=>{
+    if(user.likedQuestions.includes(location.state)){
+      setCheckLike(true)
+    }
+    else{
+      setCheckLike(false)
+    }
+  },[])
+
   const fetchQuestion = async () => {
     await axios
       .get(`${base_url}/api/v1/questions/${location.state}`)
@@ -73,17 +85,6 @@ const EachQuestionPage = () => {
         console.log(error);
       });
   };
-
-  const handleLikeAnswer = async (answerId) => {
-    // console.log("answer liked");
-    const response = await axios.post(
-      `${base_url}/api/v1/questions/${questionData._id}/answers/${answerId}/like`,
-      {
-        userId: user._id,
-      }
-    );
-    // console.log(response.data);
-  };
   const handleLikeQuestion = async () => {
     const response = await axios.post(
       `${base_url}/api/v1/questions/${questionData._id}/like`,
@@ -92,8 +93,10 @@ const EachQuestionPage = () => {
       }
     );
     // console.log(response.data);
-    setLike(response.data.likes.length);
-    if(response.data.likes.includes(user._id)){
+    dispatch(loginActions(response.data.user))
+    Cookies.set("user",JSON.stringify(response.data.user))
+    setLike(response.data.question.likes.length);
+    if(response.data.question.likes.includes(user._id)){
       setCheckLike(true)
     }
     else{
@@ -441,130 +444,7 @@ const EachQuestionPage = () => {
             </Typography>
             {questionData.answers.map((each) => {
               return (
-                <Box
-                  sx={{
-                    width: "50vw",
-                    height: "fit-content",
-                    backgroundColor: "white",
-                    gap: "10px",
-                    padding: "10px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        marginRight: "5px",
-                        marginTop: "10px",
-                        width: "3vw",
-                        height: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Avatar
-                        sx={{
-                          cursor: "pointer",
-                          backgroundColor: "#9c27b0",
-                        }}
-                      >
-                        {each.postedBy.firstName?.charAt(0).toUpperCase()}
-                      </Avatar>
-                    </Box>
-                    <Box
-                      sx={{
-                        marginLeft: "20px",
-                        marginTop: "10px",
-                        height: "100%",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontWeight: "550",
-                          marginBottom: "10px",
-                        }}
-                        variant={"h5"}
-                      >
-                        {each.postedBy.firstName} says...
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontWeight: "500",
-                          marginBottom: "10px",
-                        }}
-                        variant={"h6"}
-                      >
-                        {each.answer}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Divider />
-                  <Box
-                    sx={{
-                      width: "100%",
-                      height: "7vh",
-                      backgroundColor: "white",
-                      padding: "10px",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        marginLeft: "10px",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          marginRight: "30px",
-                          height: "100%",
-                          alignItems: "center",
-                        }}
-                      >
-                        <ThumbUpOffAltIcon
-                          sx={{
-                            cursor: "pointer",
-                            color: "#9c27b0",
-                          }}
-                          onClick={() => handleLikeAnswer(each._id)}
-                        />
-                        <Typography
-                          sx={{
-                            marginLeft: "10px",
-                            fontSize: "12px",
-                            color: "#9c27b0",
-                          }}
-                        >
-                          {each.likes?.length}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        height: "100%",
-                        alignItems: "center",
-                      }}
-                    >
-                      <AccessTimeFilledIcon />
-                      <Typography
-                        sx={{
-                          marginLeft: "10px",
-                          fontSize: "12px",
-                        }}
-                      >
-                        {each.timestamp}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
+                <EachAnswer questionData={questionData} each={each}/>
               );
             })}
           </>

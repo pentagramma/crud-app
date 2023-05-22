@@ -1,11 +1,11 @@
 import React from "react";
 import { useState } from "react";
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 import { Box, TextField, MenuItem, Typography } from "@mui/material";
-import QuestionList from "./QuestionList";
+import QuestionList from "../components/QuestionList";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import Footer from "./Footer";
+import Footer from "../components/Footer";
 import { Category } from "@mui/icons-material";
 const Dashboard = () => {
   const [page, setPage] = useState(1);

@@ -1,5 +1,7 @@
+import Cookies from "js-cookie";
+
 const initialState = {
-    user: {},
+    user: Cookies.get("user")?JSON.parse(Cookies.get("user")):{},
   };
   
   const loginReducers = (state = initialState, action) => {

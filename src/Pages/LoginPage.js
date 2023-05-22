@@ -16,6 +16,8 @@ import { checkFormData } from "../utils/loginValidation";
 import axios from "axios";
 import { base_url } from "../utils/base_url";
 import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { loginActions } from "../redux/Login/loginActions";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ const LoginPage = () => {
   const [errorVal, setErrorVal] = useState("");
   const [severity, setSeverity] = useState("error");
   const location = useLocation();
+  const dispatch = useDispatch()
   useEffect(() => {
     if (location.state) {
       setErr(location.state);
@@ -65,6 +68,9 @@ const LoginPage = () => {
             Cookies.set("token", response.data.token);
             Cookies.set("refresh-token", response.data.refresh_token);
             Cookies.set("status", "Y");
+            Cookies.set("isLoggedIn","true")
+            Cookies.set("user",JSON.stringify(response.data.user))
+            dispatch(loginActions(response.data.user));
             navigate("/", { replace: true });
           })
           .catch((error) => {
