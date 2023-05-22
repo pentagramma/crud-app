@@ -47,7 +47,7 @@ function UserQuestions({ questions }) {
       </Typography>
     </Box>
   ) : (
-    <Box component="main" sx={{ flexGrow: 1, p: 3, m: 7 }}>
+    <Box component="main" sx={{ flexGrow: 1, p: 3, m: 7, }}>
       {questions.map((question) => (
         <Box
           key={question._id}
