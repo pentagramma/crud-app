@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Box,
@@ -22,7 +22,6 @@ const Profile = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const user = useSelector((state) => state.user.user);
-  console.log(user)
 
   useEffect(() => {
     fetchQuestionsByUserId();
@@ -37,24 +36,22 @@ const Profile = () => {
       const data = response.data;
       setQuestions(data.questions);
       // console.log(response.data);
-     
     } catch (error) {
       console.error("Error fetching questions:", error);
     }
   };
 
-  const fetchAnswersByUserId = async () =>{
+  const fetchAnswersByUserId = async () => {
     try {
       const response = await axios.get(
         `${base_url}/api/v1/questions/answers/user?userId=${user._id}`
       );
       const data = response.data;
-      console.log(response.data)
       setAnswers(data);
     } catch (error) {
       console.error("Error fetching answers:", error);
     }
-  }
+  };
 
   const handleMyQuestionsClick = async () => {
     setSection("questions");
@@ -115,13 +112,27 @@ const Profile = () => {
             </Box>
           </Grid>
           <Grid item xs={10}>
-            {section === "profile" ? (
-              <UserInfo numberOfQuestions={questions?.length} numberOfAnswers={answers?.length}/>
-            ) : section === "questions" ? (
-              <UserQuestions questions={questions}/>
-            ) : (
-              <UserAnswers answers={answers}/>
-            )}
+            <Box
+              sx={{
+                height: "85vh",
+                overflowY: "scroll",
+                "&::-webkit-scrollbar": {
+                  display: "none",
+                },
+                borderLeft:"1rem solid white"
+              }}
+            >
+              {section === "profile" ? (
+                <UserInfo
+                  numberOfQuestions={questions?.length}
+                  numberOfAnswers={answers?.length}
+                />
+              ) : section === "questions" ? (
+                <UserQuestions questions={questions} />
+              ) : (
+                <UserAnswers answers={answers} />
+              )}
+            </Box>
           </Grid>
         </Grid>
       </Box>

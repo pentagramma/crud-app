@@ -9,14 +9,18 @@ import {
   Avatar,
   IconButton,
 } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import { loginActions } from "../redux/Login/loginActions";
+import AlertTitle from "@mui/material/AlertTitle";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import axios from "axios";
 import { base_url } from "../utils/base_url";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { checkFormData } from "../utils/updateUserValidation";
+import Cookies from "js-cookie";
 
-function UserInfo({numberOfQuestions,numberOfAnswers}) {
+function UserInfo({ numberOfQuestions, numberOfAnswers }) {
   const [helperText, setHelperText] = useState({
     firstName: "",
     lastName: "",
@@ -24,9 +28,11 @@ function UserInfo({numberOfQuestions,numberOfAnswers}) {
     companyName: "",
     designation: "",
   });
-  const [url,setUrl]=useState(null)
+  const dispatch=useDispatch();
+  const [url, setUrl] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [err, setErr] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [errorVal, setErrorVal] = useState("");
   const user = useSelector((state) => state.user.user);
   const [formDatas, setFormData] = useState({
@@ -36,26 +42,21 @@ function UserInfo({numberOfQuestions,numberOfAnswers}) {
     companyName: user.companyName,
     designation: user.designation,
   });
- 
 
-  const handleProfilePictureChange =  (e) => {
-    setSelectedFile(e.target.files[0])
+  const handleProfilePictureChange = (e) => {
+    setSelectedFile(e.target.files[0]);
   };
 
   const imageClickHandler = async (e) => {
     try {
-       const formData = new FormData();
+      const formData = new FormData();
       formData.append("image", selectedFile);
       formData.append("userId", user._id);
-      const response = await axios.put(
-        `${base_url}/api/v1/user/updateProfilePicture`,
-       formData
-      ).then(()=>{
-        setUrl(`${base_url}/${user.imageUrl}`)
-      })
-       
-    
-    
+      const response = await axios
+        .put(`${base_url}/api/v1/user/updateProfilePicture`, formData)
+        .then(() => {
+          setUrl(`${base_url}/${user.imageUrl}`);
+        });
     } catch (error) {
       console.error(error);
       throw new Error("Failed to upload image.");
@@ -87,6 +88,18 @@ function UserInfo({numberOfQuestions,numberOfAnswers}) {
             designation: formDatas.designation,
           });
         })
+        .then(async () => {
+          const res = await axios.get(`${base_url}/api/v1/user/profile`, {
+            userId: user._id,
+          });
+          dispatch(loginActions(res.data.user));
+          Cookies.set("user", JSON.stringify(res.data.user));
+
+          setShowAlert(true);
+          setTimeout(() => {
+            setShowAlert(false);
+          }, 3000);
+        })
         .catch((error) => {
           setErr(true);
           setErrorVal(error.response.data.message);
@@ -102,71 +115,75 @@ function UserInfo({numberOfQuestions,numberOfAnswers}) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box p={2} sx={{marginLeft:"12px"}}>
+      <Box p={2} sx={{ marginLeft: "12px", backgroundColor: "#f5f5f5",height:"85vh" }}>
         <Typography variant="h4" gutterBottom>
           User Profile
         </Typography>
+        {showAlert && (
+          <Alert severity="success" onClose={() => setShowAlert(false)}>
+            <AlertTitle>Success</AlertTitle>
+            Profile updated successfully.
+          </Alert>
+        )}
         <Grid container spacing={2}>
           <Grid item xs={12} sm={4}>
             <Paper>
               <Box p={2} textAlign="center">
-               
-                  <label htmlFor="profile-picture-upload">
-                    <input
-                      type="file"
-                      id="profile-picture-upload"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={handleProfilePictureChange}
-                    />
-                    <Box position="relative" display="inline-block">
-                      <Avatar
-                        alt="Profile Picture"
-                         src={url}
+                <label htmlFor="profile-picture-upload">
+                  <input
+                    type="file"
+                    id="profile-picture-upload"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleProfilePictureChange}
+                  />
+                  <Box position="relative" display="inline-block">
+                    <Avatar
+                      alt="Profile Picture"
+                      src={url}
+                      sx={{
+                        width: "150px",
+                        height: "150px",
+                        margin: "2px auto 16px",
+                        right: "8px",
+                        position: "relative",
+                        backgroundColor: "#9c27b0",
+                      }}
+                      avatarStyle={{
+                        position: "relative",
+                        zIndex: 1,
+                      }}
+                    >
+                      {user.firstName?.charAt(0).toUpperCase()}
+
+                      <IconButton
+                        component="span"
                         sx={{
-                          width: "150px",
-                          height: "150px",
-                          margin: "2px auto 16px",
-                          right:"8px",
-                          position: "relative",
-                          backgroundColor: "#9c27b0",
-                         
-                        }}
-                        avatarStyle={{
-                          position: "relative",
-                          zIndex: 1,
+                          position: "absolute",
+                          bottom: "8px",
+                          right: "8px",
+                          backgroundColor: "white",
                         }}
                       >
-                        {user.firstName?.charAt(0).toUpperCase()}
-
-                        <IconButton
-                          component="span"
+                        <PhotoCameraIcon
                           sx={{
-                            position: "absolute",
-                            bottom: "8px",
-                            right: "8px",
-                            backgroundColor: "white",
+                            marginBottom: "5px",
                           }}
-                        >
-                          <PhotoCameraIcon
-                            sx={{
-                              marginBottom: "5px",
-                            }}
-                          />
-                        </IconButton>
-                      </Avatar>
-                    </Box>
-                  </label>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    type="submit"
-                    size="small"
-                    onClick={imageClickHandler}
-                  >
-                    Upload Image
-                  </Button>
-          
+                        />
+                      </IconButton>
+                    </Avatar>
+                  </Box>
+                </label>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  type="submit"
+                  size="small"
+                  onClick={imageClickHandler}
+                >
+                  Upload Image
+                </Button>
+
                 <Typography variant="h6">
                   {user?.firstName?.charAt(0).toUpperCase()}
                   {user?.firstName?.slice(1)}{" "}
