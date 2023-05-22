@@ -22,6 +22,7 @@ const Profile = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const user = useSelector((state) => state.user.user);
+  console.log(user)
 
   useEffect(() => {
     fetchQuestionsByUserId();
