@@ -184,9 +184,10 @@ const EachQuestionPage = () => {
               padding: "20px",
             }}
           >
+            <Typography><b>Q. </b>{questionData.question}</Typography>
             <TextField
               multiline={true}
-              rows={10}
+              rows={9}
               value={answer}
               onChange={(e) => {
                 setAnswer(e.target.value);
