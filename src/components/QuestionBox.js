@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Avatar, Grid, Box, Divider, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { Avatar, Box, Divider, Typography } from "@mui/material";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import AccessTimeFilledIcon from "@mui/icons-material/AccessTimeFilled";
@@ -7,38 +7,18 @@ import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { base_url } from "../utils/base_url";
-
-import {
-  Button,
-  Popover,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-} from "@mui/material";
-import LoaderComponent from '../images/loader-component-gif.gif'
+import UserPopover from "./UserPopover";
+import LikesPopover from "./LikesPopover";
 
 function QuestionBox({ each }) {
-  const user = {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "johndoe@example.com",
-    imageUrl: "https://example.com/profile-image.jpg",
-    companyName: "Example Company",
-    designation: "Software Engineer",
-    questionsPosted: 10,
-    answersPosted: 25,
-  };
-
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [likedUsers, setLikedUsers] = useState([]);
-  const [numberOfQuestions,setNoq]=useState(0);
-  const [numberOfAnswers,setNoa]=useState(0);
-  const [popoverLoader,setPopoverLoader] = useState(false)
+  const [numberOfQuestions, setNoq] = useState(0);
+  const [numberOfAnswers, setNoa] = useState(0);
+  const [popoverLoader, setPopoverLoader] = useState(false);
+
   const getTimeAgo = (createdAt) => {
     const distance = formatDistanceToNow(new Date(createdAt));
     if (distance === "less than a minute") return "Just now";
@@ -48,61 +28,49 @@ function QuestionBox({ each }) {
     }
     return `${arr[1]} ${arr[2]} ago`;
   };
-  const openUser = Boolean(anchorElUser);
-  const id = openUser ? "user-popover" : undefined;
+
   const fetchLikedUsers = async () => {
     try {
       const response = await axios.get(
         `${base_url}/api/v1/questions/likes/${each._id}`
       );
-      setPopoverLoader(false)
+      setPopoverLoader(false);
       setLikedUsers(response.data);
     } catch (error) {
       console.error(error);
     }
   };
-  
 
   const fetchQuestionsByUserId = async () => {
     try {
       const response = await axios.get(
         `${base_url}/api/v1/questions/user?userId=${each.postedBy._id}`
       );
-      const data = response.data;
-      //setQuestions(data.questions);
-      console.log("dcsd")
-       console.log(response.data);
-      setNoq(response.data.questions.length)
-     
+      setNoq(response.data.questions.length);
     } catch (error) {
       console.error("Error fetching questions:", error);
       return 0;
     }
   };
 
-  const fetchAnswersByUserId = async () =>{
+  const fetchAnswersByUserId = async () => {
     try {
       const response = await axios.get(
         `${base_url}/api/v1/questions/answers/user?userId=${each.postedBy._id}`
       );
-      setPopoverLoader(false)
-      const data = response.data;
-      //console.log(response.data)
-      setNoa(response.data.length)
-     // setAnswers(data);
+      setPopoverLoader(false);
+      setNoa(response.data.length);
     } catch (error) {
       console.error("Error fetching answers:", error);
-      return 0
+      return 0;
     }
-  }
+  };
+
   const userInfloClickHandler = (event) => {
-    setPopoverLoader(true)
+    setPopoverLoader(true);
     fetchQuestionsByUserId();
     fetchAnswersByUserId();
     setAnchorElUser(event.currentTarget);
-  };
-  const handleCloseUserPopover = () => {
-    setAnchorElUser(null);
   };
 
   const nextPageHandler = () => {
@@ -110,19 +78,10 @@ function QuestionBox({ each }) {
   };
 
   const handleOpenPopover = (event) => {
-    setPopoverLoader(true)
+    setPopoverLoader(true);
     fetchLikedUsers();
     setAnchorEl(event.currentTarget);
   };
-
-  const handleClosePopover = () => {
-    setAnchorEl(null);
-  };
-
-  // useEffect(()=>{
-    
-   
-  // },[])
 
   return (
     <Box
@@ -241,96 +200,12 @@ function QuestionBox({ each }) {
             {each.likes.length}
           </Typography>
           {each.likes.length !== 0 && (
-            <Popover
-              open={Boolean(anchorEl)}
+            <LikesPopover
               anchorEl={anchorEl}
-              onClose={handleClosePopover}
-              anchorOrigin={{
-                vertical: "center",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "center",
-                horizontal: "left",
-              }}
-            >
-              <Box sx={{ p: 2, backgroundColor: "#e5e7eb" }}>
-                {popoverLoader?
-                <Box sx={{
-                  width:'70px',
-                  height:'70px'
-                }}>
-                  <img src={LoaderComponent} alt='loading....'/>
-                </Box>
-                :
-                <>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-around",
-                    mb: 1,
-                    backgroundColor: "white",
-                    borderRadius: "8px",
-                    color: "grey",
-                  }}
-                >
-                  <Typography variant="subtitle1" sx={{ mr: 1 }}>
-                    LIKED BY
-                  </Typography>
-                  <Typography variant="body2">
-                    {`${likedUsers.length} likes`}
-                  </Typography>
-                </Box>
-                <List
-                  sx={{
-                    maxHeight: "285px",
-                    overflowY: "scroll",
-                    "&::-webkit-scrollbar": {
-                      display: "none",
-                    },
-                  }}
-                >
-                  {likedUsers.map((user) => (
-                    <ListItem
-                      key={user._id}
-                      sx={{
-                        backgroundColor: "white",
-                        borderRadius: "8px",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      <ListItemAvatar>
-                        <Avatar
-                          alt={user.firstName}
-                          src={user.imageUrl}
-                          sx={{
-                            cursor: "pointer",
-                            backgroundColor: "#9c27b0",
-                          }}
-                        >
-                          {user?.firstName?.charAt(0).toUpperCase()}
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primaryTypographyProps={{
-                          variant: "body2",
-                          sx: { fontSize: "0.875rem" },
-                        }}
-                        secondaryTypographyProps={{
-                          variant: "body2",
-                          sx: { fontSize: "0.75rem" },
-                        }}
-                        primary={`${user?.firstName} ${user?.lastName}`}
-                        secondary={user?.email}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-                </>
-                }
-              </Box>
-            </Popover>
+              setAnchorEl={setAnchorEl}
+              likedUsers={likedUsers}
+              popoverLoader={popoverLoader}
+            />
           )}
         </Box>
         <Box
@@ -350,77 +225,14 @@ function QuestionBox({ each }) {
           </Typography>
         </Box>
       </Box>
-      <Popover
-        id={id}
-        open={openUser}
-        anchorEl={anchorElUser}
-        onClose={handleCloseUserPopover}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        <Box sx={{ p: 3, maxWidth: 300, borderRadius: "2rem" }}>
-        {popoverLoader?
-        <Box sx={{
-          width:'70px',
-          height:'70px'
-        }}>
-          <img src={LoaderComponent} alt='loading....'/>
-        </Box>
-        :
-                <>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item>
-              <Avatar
-                alt="User Profile"
-                src={each.postedBy.imageUrl}
-                sx={{
-                  backgroundColor: "#9c27b0",
-                  width: "4.5rem",
-                  height: "4.5rem",
-                }}
-              >
-                {each.postedBy.firstName.charAt(0).toUpperCase()}
-              </Avatar>
-            </Grid>
-            <Grid item>
-              <Typography variant="body2">Questions Posted:{numberOfQuestions}</Typography>
-              <Typography variant="body2">Answers Posted: {numberOfAnswers}</Typography>
-            </Grid>
-          </Grid>
-          <Box
-            sx={{
-              p: 2,
-              margin: 1,
-              backgroundColor: "#e5e7eb",
-              borderRadius: "2.5rem",
-            }}
-          >
-            <Typography variant="h6" align="center">
-              {each.postedBy.firstName} {each.postedBy.lastName}
-            </Typography>
-            <Typography variant="body1" align="center">
-              {each.postedBy.email}
-            </Typography>
-            {each.postedBy.designation && (
-              <Typography variant="body2" align="center">
-                {each.postedBy.designation}
-              </Typography>
-            )}
-            {each.postedBy.companyName && (
-              <Typography variant="body2" align="center">
-                {each.postedBy.companyName}
-              </Typography>
-            )}
-          </Box>
-          </>}
-        </Box>
-      </Popover>
+      <UserPopover
+        numberOfAnswers={numberOfAnswers}
+        numberOfQuestions={numberOfQuestions}
+        each={each}
+        popoverLoader={popoverLoader}
+        anchorElUser={anchorElUser}
+        setAnchorElUser={setAnchorElUser}
+      />
     </Box>
   );
 }

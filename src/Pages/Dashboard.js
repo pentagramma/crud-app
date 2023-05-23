@@ -6,7 +6,7 @@ import QuestionList from "../components/QuestionList";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import Footer from "../components/Footer";
-import { Category } from "@mui/icons-material";
+
 const Dashboard = () => {
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(1);

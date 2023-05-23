@@ -24,6 +24,7 @@ import Footer from "../components/Footer";
 import { loginActions } from "../redux/Login/loginActions";
 import EachAnswer from "../components/EachAnswer";
 import Cookies from "js-cookie";
+import UserPopover from "../components/UserPopover";
 
 const EachQuestionPage = () => {
   const location = useLocation();
@@ -57,6 +58,42 @@ const EachQuestionPage = () => {
   const user = useSelector((state) => state.user.user);
   const answerTrigger = useSelector((state) => state.extras.triggerAnswer);
   const dispatch = useDispatch();
+  const [numberOfQuestions, setNoq] = useState(0);
+  const [numberOfAnswers, setNoa] = useState(0);
+  const [popoverLoader, setPopoverLoader] = useState(false);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+
+  const userInfloClickHandler = (event) => {
+    setPopoverLoader(true);
+    fetchQuestionsByUserId();
+    fetchAnswersByUserId();
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const fetchQuestionsByUserId = async () => {
+    try {
+      const response = await axios.get(
+        `${base_url}/api/v1/questions/user?userId=${questionData.postedBy._id}`
+      );
+      setNoq(response.data.questions.length);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      return 0;
+    }
+  };
+
+  const fetchAnswersByUserId = async () => {
+    try {
+      const response = await axios.get(
+        `${base_url}/api/v1/questions/answers/user?userId=${questionData.postedBy._id}`
+      );
+      setPopoverLoader(false);
+      setNoa(response.data.length);
+    } catch (error) {
+      console.error("Error fetching answers:", error);
+      return 0;
+    }
+  };
 
   useEffect(() => {
     setLoader(true);
@@ -79,7 +116,6 @@ const EachQuestionPage = () => {
         setQuestionData(response.data.question);
         setLike(response.data.question.likes.length)
         setLoader(false);
-        // console.log(response);
       })
       .catch((error) => {
         console.log(error);
@@ -265,6 +301,7 @@ const EachQuestionPage = () => {
                       cursor: "pointer",
                       backgroundColor: "#9c27b0",
                     }}
+                    onClick={userInfloClickHandler}
                   >
                     {questionData?.postedBy.firstName?.charAt(0).toUpperCase()}
                   </Avatar>
@@ -451,6 +488,14 @@ const EachQuestionPage = () => {
           </>
         )}
       </Box>
+      <UserPopover
+        numberOfAnswers={numberOfAnswers}
+        numberOfQuestions={numberOfQuestions}
+        each={questionData}
+        popoverLoader={popoverLoader}
+        anchorElUser={anchorElUser}
+        setAnchorElUser={setAnchorElUser}
+      />
       <Footer />
     </Box>
   );
