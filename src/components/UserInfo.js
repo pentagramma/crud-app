@@ -65,7 +65,6 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     setErr(false);
-    console.log(formDatas);
     const validationResult = checkFormData(formDatas, user);
     setHelperText({
       firstName: "",
