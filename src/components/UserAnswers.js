@@ -71,6 +71,7 @@ function UserAnswers({ answers }) {
                 }}
               >
                 <Avatar
+                  src={answer.question.postedBy?.imageUrl}
                   sx={{
                     cursor: "pointer",
                     backgroundColor: "#9c27b0",
@@ -189,6 +190,7 @@ function UserAnswers({ answers }) {
                       }}
                     >
                       <Avatar
+                        src={each.postedBy.imageUrl}
                         sx={{
                           cursor: "pointer",
                           backgroundColor: "#9c27b0",

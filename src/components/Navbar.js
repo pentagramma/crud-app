@@ -15,7 +15,7 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
-  Modal
+  Modal,
 } from "@mui/material";
 import DynamicFormIcon from "@mui/icons-material/DynamicForm";
 import SearchIcon from "@mui/icons-material/Search";
@@ -25,16 +25,16 @@ import Logout from "@mui/icons-material/Logout";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import ModalView from "./ModalView";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
-const Navbar = ({page}) => {
+const Navbar = ({ page }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [resetAI, setResetAI] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isModalOpen,setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const user = useSelector((state) => state.user);
-  const [letter,setLetter]=useState('U')
-  const navigate = useNavigate()
+  const [letter, setLetter] = useState("U");
+  const navigate = useNavigate();
 
   const open = Boolean(anchorEl);
 
@@ -46,20 +46,20 @@ const Navbar = ({page}) => {
     setAnchorEl(null);
   };
 
-  const handleProfile = ()=>{
-    handleClose()
-    navigate('/profile');
-  }
+  const handleProfile = () => {
+    handleClose();
+    navigate("/profile");
+  };
 
-  const handleLogout = ()=>{
-    handleClose()
-    Cookies.remove('token')
-    Cookies.remove('refresh-token')
-    Cookies.remove('status')
-    Cookies.remove('isLoggedIn')
-    Cookies.remove('user')
-    navigate('/login',{replace:true})
-  }
+  const handleLogout = () => {
+    handleClose();
+    Cookies.remove("token");
+    Cookies.remove("refresh-token");
+    Cookies.remove("status");
+    Cookies.remove("isLoggedIn");
+    Cookies.remove("user");
+    navigate("/login", { replace: true });
+  };
 
   const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -76,10 +76,11 @@ const Navbar = ({page}) => {
       width: "20vw",
     },
   }));
-  
-  useEffect(()=>{
+
+  useEffect(() => {
+    console.log(user);
     setLetter(user?.user?.firstName?.charAt(0).toUpperCase());
-  },[user])
+  }, [user]);
 
   const SearchIconWrapper = styled("div")(({ theme }) => ({
     padding: theme.spacing(0, 2),
@@ -118,28 +119,48 @@ const Navbar = ({page}) => {
           {resetAI && <Chatbot />}
         </Box>
       </Drawer>
-      <Modal open={isModalOpen} onClose={()=>{setIsModalOpen(false)}}>
-        <ModalView setIsModalOpen={setIsModalOpen}/>
+      <Modal
+        open={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
+      >
+        <ModalView setIsModalOpen={setIsModalOpen} />
       </Modal>
       <Toolbar>
-        <IconButton size="large" edge="start" onClick={()=>navigate('/')} color="inherit" aria-label="logo">
+        <IconButton
+          size="large"
+          edge="start"
+          onClick={() => navigate("/")}
+          color="inherit"
+          aria-label="logo"
+        >
           <DynamicFormIcon />
         </IconButton>
         <Typography variant="h6" component="div" width={"10vw"}>
           Q&AI
         </Typography>
-       {page && <Search>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder="Search your query..."
-            inputProps={{ "aria-label": "search" }}
-          />
-        </Search>}
+        {page && (
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search your query..."
+              inputProps={{ "aria-label": "search" }}
+            />
+          </Search>
+        )}
         <Box sx={{ flexGrow: 1 }} />
         <Stack direction={"row"} spacing={2}>
-          <Button color="inherit" onClick={()=>{setIsModalOpen(true)}}>Post a Question</Button>
+          <Button
+            color="inherit"
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            Post a Question
+          </Button>
           <Button
             color="inherit"
             onClick={() => {
@@ -158,7 +179,9 @@ const Navbar = ({page}) => {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar sx={{ width: 32, height: 32 }}>{letter}</Avatar>
+              <Avatar src={user.imageUrl} sx={{ width: 32, height: 32 }}>
+               {letter}
+              </Avatar>
             </IconButton>
           </Tooltip>
         </Stack>
@@ -198,7 +221,7 @@ const Navbar = ({page}) => {
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
           <MenuItem onClick={handleProfile}>
-            <Avatar /> My account
+            <Avatar   src={user?.imageUrl}/> My account
           </MenuItem>
           <MenuItem onClick={handleLogout}>
             <ListItemIcon>

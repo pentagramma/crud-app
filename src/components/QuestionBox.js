@@ -106,6 +106,7 @@ function QuestionBox({ each }) {
         }}
       >
         <Avatar
+        src={each.postedBy?.imageUrl}
           sx={{
             cursor: "pointer",
             backgroundColor: "#9c27b0",
