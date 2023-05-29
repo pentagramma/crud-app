@@ -27,13 +27,15 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
     email: "",
     companyName: "",
     designation: "",
+    imageUrl: "",
   });
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const [url, setUrl] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [err, setErr] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [errorVal, setErrorVal] = useState("");
+  const [isEdited, setIsEdited] = useState(false);
   const user = useSelector((state) => state.user.user);
   const [formDatas, setFormData] = useState({
     firstName: user.firstName,
@@ -41,31 +43,29 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
     email: user.email,
     companyName: user.companyName,
     designation: user.designation,
+    imageUrl: user.imageUrl,
   });
 
-  const handleProfilePictureChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
-
-  const imageClickHandler = async (e) => {
-    try {
-      const formData = new FormData();
-      formData.append("image", selectedFile);
-      formData.append("userId", user._id);
-      const response = await axios
-        .put(`${base_url}/api/v1/user/updateProfilePicture`, formData)
-        .then(() => {
-          setUrl(`${base_url}/${user.imageUrl}`);
-        });
-    } catch (error) {
-      console.error(error);
-      throw new Error("Failed to upload image.");
-    }
+  const handleProfilePictureChange = (pics) => {
+    const data = new FormData();
+    data.append("file", pics);
+    data.append("upload_preset", "qandaizb");
+    data.append("cloud_name", "divpq1r3o");
+    fetch("https://api.cloudinary.com/v1_1/divpq1r3o/image/upload", {
+      method: "post",
+      body: data,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setIsEdited(true);
+        setFormData({ ...formDatas, imageUrl: data.url.toString() });
+      });
   };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     setErr(false);
+    console.log(formDatas);
     const validationResult = checkFormData(formDatas, user);
     setHelperText({
       firstName: "",
@@ -73,6 +73,7 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
       email: "",
       companyName: "",
       designation: "",
+      imageUrl: "",
     });
     if (Object.keys(validationResult).length > 0) {
       setHelperText({ ...validationResult });
@@ -86,7 +87,9 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
             email: formDatas.email,
             companyName: formDatas.companyName,
             designation: formDatas.designation,
+            imageUrl: formDatas.imageUrl,
           });
+          setIsEdited(false);
         })
         .then(async () => {
           const res = await axios.get(`${base_url}/api/v1/user/profile`, {
@@ -109,13 +112,17 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
 
   const inputChangeHandler = (e) => {
     setFormData({ ...formDatas, [e.target.name]: e.target.value });
+    setIsEdited(true);
   };
 
   const theme = createTheme();
 
   return (
     <ThemeProvider theme={theme}>
-      <Box p={2} sx={{ marginLeft: "12px", backgroundColor: "#f5f5f5",height:"85vh" }}>
+      <Box
+        p={2}
+        sx={{ marginLeft: "12px", backgroundColor: "#f5f5f5", height: "85vh" }}
+      >
         <Typography variant="h4" gutterBottom>
           User Profile
         </Typography>
@@ -135,12 +142,15 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
                     id="profile-picture-upload"
                     accept="image/*"
                     style={{ display: "none" }}
-                    onChange={handleProfilePictureChange}
+                    onChange={(e) => {
+                      if (!e.target.files) return;
+                      handleProfilePictureChange(e.target.files[0]);
+                    }}
                   />
                   <Box position="relative" display="inline-block">
                     <Avatar
                       alt="Profile Picture"
-                      src={url}
+                      src={formDatas.imageUrl}
                       sx={{
                         width: "150px",
                         height: "150px",
@@ -155,34 +165,24 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
                       }}
                     >
                       {user.firstName?.charAt(0).toUpperCase()}
-
-                      <IconButton
-                        component="span"
-                        sx={{
-                          position: "absolute",
-                          bottom: "8px",
-                          right: "8px",
-                          backgroundColor: "white",
-                        }}
-                      >
-                        <PhotoCameraIcon
-                          sx={{
-                            marginBottom: "5px",
-                          }}
-                        />
-                      </IconButton>
                     </Avatar>
+                    <IconButton
+                      component="span"
+                      sx={{
+                        position: "absolute",
+                        bottom: "8px",
+                        right: "8px",
+                        backgroundColor: "white",
+                      }}
+                    >
+                      <PhotoCameraIcon
+                        sx={{
+                          marginBottom: "5px",
+                        }}
+                      />
+                    </IconButton>
                   </Box>
                 </label>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  type="submit"
-                  size="small"
-                  onClick={imageClickHandler}
-                >
-                  Upload Image
-                </Button>
 
                 <Typography variant="h6">
                   {user?.firstName?.charAt(0).toUpperCase()}
@@ -266,6 +266,7 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
                     </Grid>
                     <Grid item xs={12}>
                       <Button
+                        disabled={!isEdited}
                         variant="contained"
                         color="secondary"
                         type="submit"

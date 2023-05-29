@@ -297,6 +297,7 @@ const EachQuestionPage = () => {
                   }}
                 >
                   <Avatar
+                    src={questionData?.postedBy.imageUrl}
                     sx={{
                       cursor: "pointer",
                       backgroundColor: "#9c27b0",

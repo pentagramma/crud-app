@@ -110,6 +110,7 @@ const EachAnswer = ({ each, questionData }) => {
           }}
         >
           <Avatar
+            src={each.postedBy.imageUrl}
             sx={{
               cursor: "pointer",
               backgroundColor: "#9c27b0",
