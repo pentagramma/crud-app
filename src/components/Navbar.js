@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { styled, alpha } from "@mui/material/styles";
 import {
   AppBar,
   Button,
@@ -9,7 +8,6 @@ import {
   Toolbar,
   Typography,
   Box,
-  InputBase,
   Drawer,
   Avatar,
   Menu,
@@ -25,9 +23,15 @@ import Logout from "@mui/icons-material/Logout";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import ModalView from "./ModalView";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import ClearIcon from "@mui/icons-material/Clear";
+import { base_url } from "../utils/base_url";
+import axios from "axios";
+import { fetchQuestions } from "../redux/Questions/questionsActions";
 
-const Navbar = ({ page }) => {
+const Navbar = ({ page, setSearchCheck, setSearchResultCheck }) => {
+  const dispatch = useDispatch()
+  const resetTrigger = useSelector(state => state.extras.resetSearch)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [resetAI, setResetAI] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -35,6 +39,8 @@ const Navbar = ({ page }) => {
   const user = useSelector((state) => state.user);
   const [letter, setLetter] = useState("U");
   const navigate = useNavigate();
+  const [clearCheck, setClearCheck] = useState(false);
+  const [searchString, setSearchString] = useState("");
 
   const open = Boolean(anchorEl);
 
@@ -61,49 +67,42 @@ const Navbar = ({ page }) => {
     navigate("/login", { replace: true });
   };
 
-  const Search = styled("div")(({ theme }) => ({
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "20vw",
-    },
-  }));
-
   useEffect(() => {
-    console.log(user);
     setLetter(user?.user?.firstName?.charAt(0).toUpperCase());
   }, [user]);
 
-  const SearchIconWrapper = styled("div")(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }));
+  useEffect(()=>{
+    setSearchString('')
+  },[resetTrigger])
 
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "inherit",
-    "& .MuiInputBase-input": {
-      padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      [theme.breakpoints.up("md")]: {
-        width: "20ch",
-      },
-    },
-  }));
+  const searchChangeHandler = (e) => {
+    if (e.target.value) {
+      setClearCheck(true);
+    } else {
+      setClearCheck(false);
+    }
+    setSearchString(e.target.value);
+  };
+
+  const searchSubmitHandler = (e) => {
+    if (searchString && e.key === "Enter") {
+      axios
+        .get(`${base_url}/api/v1/questions/search/${searchString}`)
+        .then((response) => {
+          if(response.data.searchedQuestions.length > 0){
+            setSearchResultCheck(false)
+            setSearchCheck(true)
+            dispatch(fetchQuestions(response.data.searchedQuestions))
+          }
+          else{
+            setSearchResultCheck(true)
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
   return (
     <AppBar position="static" color="secondary">
@@ -141,15 +140,30 @@ const Navbar = ({ page }) => {
           Q&AI
         </Typography>
         {page && (
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
+          <Box
+            sx={{
+              backgroundColor: "white",
+              color: "#9c27b0",
+              padding: "6px",
+              borderRadius: "7px",
+              width: "370px",
+            }}
+          >
+            <SearchIcon />
+            <input
+              style={{
+                outline: "none",
+                background: "none",
+                marginLeft: "10px",
+                width: "300px",
+              }}
               placeholder="Search your query..."
-              inputProps={{ "aria-label": "search" }}
+              onChange={searchChangeHandler}
+              onKeyDown={searchSubmitHandler}
+              value={searchString}
             />
-          </Search>
+            {clearCheck && <ClearIcon sx={{cursor:'pointer'}} onClick={()=>{setSearchString('');setClearCheck(false)}}/>}
+          </Box>
         )}
         <Box sx={{ flexGrow: 1 }} />
         <Stack direction={"row"} spacing={2}>
@@ -179,9 +193,7 @@ const Navbar = ({ page }) => {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar src={user.imageUrl} sx={{ width: 32, height: 32 }}>
-               {letter}
-              </Avatar>
+              <Avatar sx={{ width: 32, height: 32 }}>{letter}</Avatar>
             </IconButton>
           </Tooltip>
         </Stack>
@@ -221,7 +233,7 @@ const Navbar = ({ page }) => {
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
           <MenuItem onClick={handleProfile}>
-            <Avatar   src={user?.imageUrl}/> My account
+            <Avatar /> My account
           </MenuItem>
           <MenuItem onClick={handleLogout}>
             <ListItemIcon>
