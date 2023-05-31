@@ -2,6 +2,7 @@
 const initialState = {
     trigger: false,
     triggerAnswer: false,
+    resetSearch:false
 }
 
 const extraReducer = (state=initialState,action)=>{
@@ -13,6 +14,10 @@ const extraReducer = (state=initialState,action)=>{
         case "TRIGGER_ANSWER_RELOAD": return {
             ...state,
             triggerAnswer: !state.triggerAnswer
+        }
+        case "RESET_SEARCH": return {
+            ...state,
+            resetSearch:!state.resetSearch
         }
         default: return state
     }

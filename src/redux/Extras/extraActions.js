@@ -10,3 +10,9 @@ export const triggerAnswerReload = ()=>{
         type: "TRIGGER_ANSWER_RELOAD"
     }
 }
+
+export const resetSearch = ()=>{
+    return {
+        type: "RESET_SEARCH"
+    }
+}

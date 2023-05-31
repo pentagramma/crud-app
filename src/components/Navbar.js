@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { styled, alpha } from "@mui/material/styles";
 import {
   AppBar,
   Button,
@@ -9,13 +8,12 @@ import {
   Toolbar,
   Typography,
   Box,
-  InputBase,
   Drawer,
   Avatar,
   Menu,
   MenuItem,
   ListItemIcon,
-  Modal
+  Modal,
 } from "@mui/material";
 import DynamicFormIcon from "@mui/icons-material/DynamicForm";
 import SearchIcon from "@mui/icons-material/Search";
@@ -25,16 +23,24 @@ import Logout from "@mui/icons-material/Logout";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import ModalView from "./ModalView";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
+import ClearIcon from "@mui/icons-material/Clear";
+import { base_url } from "../utils/base_url";
+import axios from "axios";
+import { fetchQuestions } from "../redux/Questions/questionsActions";
 
-const Navbar = ({page}) => {
+const Navbar = ({ page, setSearchCheck, setSearchResultCheck }) => {
+  const dispatch = useDispatch()
+  const resetTrigger = useSelector(state => state.extras.resetSearch)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [resetAI, setResetAI] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isModalOpen,setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const user = useSelector((state) => state.user);
-  const [letter,setLetter]=useState('U')
-  const navigate = useNavigate()
+  const [letter, setLetter] = useState("U");
+  const navigate = useNavigate();
+  const [clearCheck, setClearCheck] = useState(false);
+  const [searchString, setSearchString] = useState("");
 
   const open = Boolean(anchorEl);
 
@@ -46,63 +52,57 @@ const Navbar = ({page}) => {
     setAnchorEl(null);
   };
 
-  const handleProfile = ()=>{
-    handleClose()
-    navigate('/profile');
-  }
+  const handleProfile = () => {
+    handleClose();
+    navigate("/profile");
+  };
 
-  const handleLogout = ()=>{
-    handleClose()
-    Cookies.remove('token')
-    Cookies.remove('refresh-token')
-    Cookies.remove('status')
-    Cookies.remove('isLoggedIn')
-    Cookies.remove('user')
-    navigate('/login',{replace:true})
-  }
+  const handleLogout = () => {
+    handleClose();
+    Cookies.remove("token");
+    Cookies.remove("refresh-token");
+    Cookies.remove("status");
+    Cookies.remove("isLoggedIn");
+    Cookies.remove("user");
+    navigate("/login", { replace: true });
+  };
 
-  const Search = styled("div")(({ theme }) => ({
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "20vw",
-    },
-  }));
-  
-  useEffect(()=>{
+  useEffect(() => {
     setLetter(user?.user?.firstName?.charAt(0).toUpperCase());
-  },[user])
+  }, [user]);
 
-  const SearchIconWrapper = styled("div")(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }));
+  useEffect(()=>{
+    setSearchString('')
+  },[resetTrigger])
 
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "inherit",
-    "& .MuiInputBase-input": {
-      padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      [theme.breakpoints.up("md")]: {
-        width: "20ch",
-      },
-    },
-  }));
+  const searchChangeHandler = (e) => {
+    if (e.target.value) {
+      setClearCheck(true);
+    } else {
+      setClearCheck(false);
+    }
+    setSearchString(e.target.value);
+  };
+
+  const searchSubmitHandler = (e) => {
+    if (searchString && e.key === "Enter") {
+      axios
+        .get(`${base_url}/api/v1/questions/search/${searchString}`)
+        .then((response) => {
+          if(response.data.searchedQuestions.length > 0){
+            setSearchResultCheck(false)
+            setSearchCheck(true)
+            dispatch(fetchQuestions(response.data.searchedQuestions))
+          }
+          else{
+            setSearchResultCheck(true)
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
   return (
     <AppBar position="static" color="secondary">
@@ -118,28 +118,63 @@ const Navbar = ({page}) => {
           {resetAI && <Chatbot />}
         </Box>
       </Drawer>
-      <Modal open={isModalOpen} onClose={()=>{setIsModalOpen(false)}}>
-        <ModalView setIsModalOpen={setIsModalOpen}/>
+      <Modal
+        open={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
+      >
+        <ModalView setIsModalOpen={setIsModalOpen} />
       </Modal>
       <Toolbar>
-        <IconButton size="large" edge="start" onClick={()=>navigate('/')} color="inherit" aria-label="logo">
+        <IconButton
+          size="large"
+          edge="start"
+          onClick={() => navigate("/")}
+          color="inherit"
+          aria-label="logo"
+        >
           <DynamicFormIcon />
         </IconButton>
         <Typography variant="h6" component="div" width={"10vw"}>
           Q&AI
         </Typography>
-       {page && <Search>
-          <SearchIconWrapper>
+        {page && (
+          <Box
+            sx={{
+              backgroundColor: "white",
+              color: "#9c27b0",
+              padding: "6px",
+              borderRadius: "7px",
+              width: "370px",
+            }}
+          >
             <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder="Search your query..."
-            inputProps={{ "aria-label": "search" }}
-          />
-        </Search>}
+            <input
+              style={{
+                outline: "none",
+                background: "none",
+                marginLeft: "10px",
+                width: "300px",
+              }}
+              placeholder="Search your query..."
+              onChange={searchChangeHandler}
+              onKeyDown={searchSubmitHandler}
+              value={searchString}
+            />
+            {clearCheck && <ClearIcon sx={{cursor:'pointer'}} onClick={()=>{setSearchString('');setClearCheck(false)}}/>}
+          </Box>
+        )}
         <Box sx={{ flexGrow: 1 }} />
         <Stack direction={"row"} spacing={2}>
-          <Button color="inherit" onClick={()=>{setIsModalOpen(true)}}>Post a Question</Button>
+          <Button
+            color="inherit"
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            Post a Question
+          </Button>
           <Button
             color="inherit"
             onClick={() => {
