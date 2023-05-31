@@ -23,16 +23,24 @@ import Logout from "@mui/icons-material/Logout";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import ModalView from "./ModalView";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
+import ClearIcon from "@mui/icons-material/Clear";
+import { base_url } from "../utils/base_url";
+import axios from "axios";
+import { fetchQuestions } from "../redux/Questions/questionsActions";
 
-const Navbar = ({page}) => {
+const Navbar = ({ page, setSearchCheck, setSearchResultCheck }) => {
+  const dispatch = useDispatch()
+  const resetTrigger = useSelector(state => state.extras.resetSearch)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [resetAI, setResetAI] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isModalOpen,setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const user = useSelector((state) => state.user);
-  const [letter,setLetter]=useState('U')
-  const navigate = useNavigate()
+  const [letter, setLetter] = useState("U");
+  const navigate = useNavigate();
+  const [clearCheck, setClearCheck] = useState(false);
+  const [searchString, setSearchString] = useState("");
 
   const open = Boolean(anchorEl);
 
@@ -44,10 +52,10 @@ const Navbar = ({page}) => {
     setAnchorEl(null);
   };
 
-  const handleProfile = ()=>{
-    handleClose()
-    navigate('/profile');
-  }
+  const handleProfile = () => {
+    handleClose();
+    navigate("/profile");
+  };
 
   const handleLogout = () => {
     handleClose();
@@ -119,7 +127,13 @@ const Navbar = ({page}) => {
         <ModalView setIsModalOpen={setIsModalOpen} />
       </Modal>
       <Toolbar>
-        <IconButton size="large" edge="start" onClick={()=>navigate('/')} color="inherit" aria-label="logo">
+        <IconButton
+          size="large"
+          edge="start"
+          onClick={() => navigate("/")}
+          color="inherit"
+          aria-label="logo"
+        >
           <DynamicFormIcon />
         </IconButton>
         <Typography variant="h6" component="div" width={"10vw"}>
@@ -179,9 +193,7 @@ const Navbar = ({page}) => {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
             >
-              <Avatar src={user.imageUrl} sx={{ width: 32, height: 32 }}>
-               {letter}
-              </Avatar>
+              <Avatar sx={{ width: 32, height: 32 }}>{letter}</Avatar>
             </IconButton>
           </Tooltip>
         </Stack>
@@ -221,7 +233,7 @@ const Navbar = ({page}) => {
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
           <MenuItem onClick={handleProfile}>
-            <Avatar   src={user?.imageUrl}/> My account
+            <Avatar /> My account
           </MenuItem>
           <MenuItem onClick={handleLogout}>
             <ListItemIcon>
