@@ -85,25 +85,6 @@ const LoginPage = () => {
   };
   return (
     <Box className="bg-gradient-to-r from-fuchsia-800 to-fuchsia-800 w-screen h-screen flex justify-center items-center flex-col">
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "white",
-          width: "29vw",
-          height: "5vw",
-          marginBottom: "15px",
-          padding: "10px",
-          borderRadius: "10px",
-        }}
-      >
-        <Typography variant="h5" fontWeight={"600"} color={"secondary"}>
-        PhotoGram
-        </Typography>
-        <Typography>Introducing AI to your community</Typography>
-      </Box>
       <Container
         component="main"
         maxWidth="xs"

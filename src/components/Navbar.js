@@ -28,6 +28,8 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { base_url } from "../utils/base_url";
 import axios from "axios";
 import { fetchQuestions } from "../redux/Questions/questionsActions";
+import AddIcon from '@mui/icons-material/Add';
+import { Add } from "@mui/icons-material";
 
 const Navbar = ({ page, setSearchCheck, setSearchResultCheck }) => {
   const dispatch = useDispatch()
@@ -173,7 +175,7 @@ const Navbar = ({ page, setSearchCheck, setSearchResultCheck }) => {
               setIsModalOpen(true);
             }}
           >
-            Post Something?
+           <AddIcon/> Post Something?
           </Button>
           <Tooltip title="Account settings">
             <IconButton

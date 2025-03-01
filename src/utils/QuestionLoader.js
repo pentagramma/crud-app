@@ -1,6 +1,7 @@
 import React from 'react'
 import LoaderComponent from '../images/loader-component-gif.gif'
 import { Box } from '@mui/material'
+import { CircularProgress } from '@mui/material';
 
 const QuestionLoader = () => {
   return (
@@ -15,7 +16,7 @@ const QuestionLoader = () => {
         width:'200px',
         height:'200px'
       }}>
-        <img src={LoaderComponent} alt='loading....'/>
+       <CircularProgress/>
       </Box>
     </Box>
   )
