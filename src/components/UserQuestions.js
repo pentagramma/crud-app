@@ -32,6 +32,10 @@ function UserQuestions({ questions }) {
     navigate("/each-question", { state: questionId });
   };
 
+  useEffect(() => {
+    console.log(questions);
+  },[questions])
+
   return !flag ? (
     <Box
       sx={{
@@ -53,12 +57,14 @@ function UserQuestions({ questions }) {
           key={question._id}
           sx={{
             width: "50vw",
-            height: "150px",
+            minHeight: "150px", // Changed from fixed height to minHeight
             backgroundColor: "white",
             display: "flex",
             gap: "10px",
             padding: "10px",
-            marginBottom: "20px",
+            marginBottom: "20px", // This adds space between question boxes
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)", // Optional: adds a subtle shadow
+            borderRadius: "8px", // Optional: rounds the corners
           }}
         >
           <Box
@@ -87,7 +93,8 @@ function UserQuestions({ questions }) {
               marginLeft: "20px",
               marginTop: "10px",
               width: "35vw",
-              height: "100%",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <Typography
@@ -105,22 +112,34 @@ function UserQuestions({ questions }) {
                   textDecoration: "underline",
                 },
               }}
-              onClick={()=>nextPageHandler(question._id)}
+              onClick={() => nextPageHandler(question._id)}
               variant={"h5"}
             >
               {question.question}
             </Typography>
-            <Typography
-              sx={{
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-                color: "#aeacbb",
-              }}
-              variant={"h6"}
-            >
-              {question.gpt_answer}
-            </Typography>
+            {question.imageUrl && (
+              <Box
+                sx={{
+                  width: "100%",
+                  maxHeight: "200px",
+                  overflow: "hidden",
+                  marginBottom: "10px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  src={question.imageUrl}
+                  alt="image"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "200px",
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
+            )}
           </Box>
           <Divider orientation="vertical" />
           <Box
@@ -147,7 +166,7 @@ function UserQuestions({ questions }) {
                   fontSize: "12px",
                 }}
               >
-                {question.ans_count}
+                {question.answers.length}
               </Typography>
             </Box>
             <Box

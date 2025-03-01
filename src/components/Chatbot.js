@@ -20,7 +20,7 @@ const Chatbot = () => {
   let steps = [
     {
       id: "1",
-      message: "Hello! My name is Ada. Welcome to Q&AI!",
+      message: "Hello! My name is Ada. Welcome to PhotoGram!",
       trigger: "3",
     },
     {

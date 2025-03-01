@@ -191,10 +191,10 @@ function UserInfo({ numberOfQuestions, numberOfAnswers }) {
                 </Typography>
                 <Typography variant="subtitle1">{user?.email}</Typography>
                 <Typography variant="subtitle1">
-                  Number of Questions posted : {numberOfQuestions}
+                  Number of Posts : {numberOfQuestions}
                 </Typography>
                 <Typography variant="subtitle1">
-                  Number of Answers: {numberOfAnswers}
+                  Number of Comments: {numberOfAnswers}
                 </Typography>
               </Box>
             </Paper>

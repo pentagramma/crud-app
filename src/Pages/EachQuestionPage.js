@@ -62,6 +62,7 @@ const EachQuestionPage = () => {
   const [numberOfAnswers, setNoa] = useState(0);
   const [popoverLoader, setPopoverLoader] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  
 
   const userInfloClickHandler = (event) => {
     setPopoverLoader(true);
@@ -109,18 +110,20 @@ const EachQuestionPage = () => {
     }
   },[])
 
+  
   const fetchQuestion = async () => {
-    await axios
-      .get(`${base_url}/api/v1/questions/${location.state}`)
-      .then((response) => {
-        setQuestionData(response.data.question);
-        setLike(response.data.question.likes.length)
-        setLoader(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  try {
+    const response = await axios.get(`${base_url}/api/v1/questions/${location.state}`);
+    setQuestionData(response.data.question);
+    setLike(response.data.question.likes.length);
+    setLoader(false);
+  } catch (error) {
+    console.error("Error fetching question:", error);
+    setLoader(false);
+    // You might want to set some error state here and display a message to the user
+  }
+};
+
   const handleLikeQuestion = async () => {
     const response = await axios.post(
       `${base_url}/api/v1/questions/${questionData._id}/like`,
@@ -175,6 +178,7 @@ const EachQuestionPage = () => {
         height: "fit-content",
       }}
     >
+      
       <Modal
         open={isModalOpen}
         onClose={() => {
@@ -220,7 +224,7 @@ const EachQuestionPage = () => {
               padding: "20px",
             }}
           >
-            <Typography><b>Q. </b>{questionData.question}</Typography>
+            <Typography>{questionData.question}</Typography>
             <TextField
               multiline={true}
               rows={9}
@@ -229,7 +233,7 @@ const EachQuestionPage = () => {
                 setAnswer(e.target.value);
               }}
               sx={{ marginTop: "10px" }}
-              placeholder="Type your Answer..."
+              placeholder="Write something here..."
               variant="outlined"
               color="secondary"
               fullWidth
@@ -247,7 +251,7 @@ const EachQuestionPage = () => {
                 marginBottom: "40px",
               }}
             >
-              Add Answer
+              Send
             </Button>
           </Box>
         )}
@@ -273,219 +277,120 @@ const EachQuestionPage = () => {
             <Box
               sx={{
                 width: "50vw",
-                height: "fit-content",
                 backgroundColor: "white",
                 gap: "10px",
-                padding: "10px",
-                marginBottom: "10px",
+                padding: "20px",
+                marginBottom: "20px",
+                borderRadius: "8px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
               }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                }}
-              >
-                <Box
+              <Box sx={{ display: "flex", marginBottom: "15px" }}>
+                <Avatar
+                  src={questionData?.postedBy.imageUrl}
                   sx={{
-                    marginRight: "5px",
-                    marginTop: "10px",
-                    width: "3vw",
-                    height: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    cursor: "pointer",
+                    backgroundColor: "#9c27b0",
+                    marginRight: "15px",
                   }}
+                  onClick={userInfloClickHandler}
                 >
-                  <Avatar
-                    src={questionData?.postedBy.imageUrl}
-                    sx={{
-                      cursor: "pointer",
-                      backgroundColor: "#9c27b0",
-                    }}
-                    onClick={userInfloClickHandler}
-                  >
-                    {questionData?.postedBy.firstName?.charAt(0).toUpperCase()}
-                  </Avatar>
-                </Box>
-                <Box
-                  sx={{
-                    marginLeft: "20px",
-                    marginTop: "10px",
-                    height: "100%",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: "550",
-                      marginBottom: "10px",
-                    }}
-                    variant={"h5"}
-                  >
-                    {questionData.question}
+                  {questionData?.postedBy.firstName?.charAt(0).toUpperCase()}
+                </Avatar>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    {questionData?.postedBy.firstName}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    {new Date(questionData.createdAt).toLocaleString()}
                   </Typography>
                 </Box>
               </Box>
-              <Divider />
-              <Box
+              <Typography
+                variant="h5"
                 sx={{
-                  width: "100%",
-                  height: "7vh",
-                  backgroundColor: "white",
-                  padding: "10px",
-                  display: "flex",
-                  justifyContent: "space-between",
+                  fontWeight: "550",
+                  marginBottom: "15px",
                 }}
               >
+                {questionData.question}
+              </Typography>
+              {questionData.imageUrl && (
                 <Box
                   sx={{
-                    display: "flex",
-                    marginLeft: "10px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      marginRight: "30px",
-                      height: "100%",
-                      alignItems: "center",
-                    }}
-                  >
-                    {checkLike ? (
-                      <ThumbUpAltIcon
-                        sx={{
-                          cursor: "pointer",
-                          color: "#9c27b0",
-                        }}
-                        onClick={handleLikeQuestion}
-                      />
-                    ) : (
-                      <ThumbUpOffAltIcon
-                        sx={{
-                          cursor: "pointer",
-                          color: "#9c27b0",
-                        }}
-                        onClick={handleLikeQuestion}
-                      />
-                    )}
-                    <Typography
-                      sx={{
-                        marginLeft: "10px",
-                        fontSize: "12px",
-                        color: "#9c27b0",
-                      }}
-                    >
-                      {like}
-                    </Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      height: "100%",
-                      alignItems: "center",
-                    }}
-                  >
-                    <AccessTimeFilledIcon />
-                    <Typography
-                      sx={{
-                        marginLeft: "10px",
-                        fontSize: "12px",
-                      }}
-                    >
-                      {questionData.createdAt}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => {
-                      setIsModalOpen(true);
-                    }}
-                  >
-                    Answer this question
-                  </Button>
-                </Box>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                width: "50vw",
-                height: "fit-content",
-                backgroundColor: "white",
-                gap: "10px",
-                padding: "10px",
-                marginBottom: "20px",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                }}
-              >
-                <Box
-                  sx={{
-                    marginRight: "5px",
-                    marginTop: "10px",
-                    width: "3vw",
-                    height: "100%",
+                    width: "100%",
+                    maxHeight: "400px",
+                    marginBottom: "15px",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    overflow: "hidden",
+                    borderRadius: "4px",
                   }}
                 >
-                  <Avatar
-                    sx={{
-                      cursor: "pointer",
-                      backgroundColor: "#9c27b0",
+                  <img
+                    src={questionData.imageUrl}
+                    alt="Question"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "400px",
+                      objectFit: "contain",
                     }}
-                    src={BotAvatar}
-                    alt="bot-avatar"
                   />
                 </Box>
-                <Box
-                  sx={{
-                    marginLeft: "20px",
-                    marginTop: "10px",
-                    height: "100%",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: "550",
-                      marginBottom: "10px",
-                    }}
-                    variant={"h5"}
-                  >
-                    Answer by AI
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: "500",
-                      marginBottom: "10px",
-                    }}
-                    variant={"h6"}
-                  >
-                    {questionData.gpt_answer}
-                  </Typography>
+              )}
+              <Divider sx={{ marginY: 2 }} />
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  {checkLike ? (
+                    <ThumbUpAltIcon
+                      sx={{
+                        cursor: "pointer",
+                        color: "#9c27b0",
+                        marginRight: "5px",
+                      }}
+                      onClick={handleLikeQuestion}
+                    />
+                  ) : (
+                    <ThumbUpOffAltIcon
+                      sx={{
+                        cursor: "pointer",
+                        color: "#9c27b0",
+                        marginRight: "5px",
+                      }}
+                      onClick={handleLikeQuestion}
+                    />
+                  )}
+                  <Typography color="textSecondary">{like}</Typography>
                 </Box>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Add a comment!
+                </Button>
               </Box>
             </Box>
             <Typography
               variant="h5"
               sx={{
                 fontWeight: "550",
-                marginBottom: "10px",
+                marginBottom: "20px",
               }}
             >
               {questionData.answers.length} community{" "}
-              {questionData.answers.length < 2 ? "answer" : "answers"}
+              {questionData.answers.length === 1 ? "answer" : "answers"}
             </Typography>
-            {questionData.answers.map((each) => {
-              return (
-                <EachAnswer questionData={questionData} each={each}/>
-              );
-            })}
+            {questionData.answers.map((each) => (
+              <EachAnswer key={each._id} questionData={questionData} each={each} />
+            ))}
           </>
         )}
       </Box>

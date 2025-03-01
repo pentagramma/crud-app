@@ -14,6 +14,11 @@ function UserAnswers({ answers }) {
       setFlag(false);
     }
   }, []);
+
+  useEffect(() => {
+    console.log(answers)
+    console.log("answers")
+  },[answers])
   return !flag ? (
     <Box
       sx={{
@@ -98,6 +103,27 @@ function UserAnswers({ answers }) {
                 </Typography>
               </Box>
             </Box>
+            {answer.imageUrl && (
+              <Box
+                sx={{
+                  width: "100%",
+                  maxHeight: "300px",
+                  overflow: "hidden",
+                  marginBottom: "15px",
+                  borderRadius: "4px",
+                }}
+              >
+                <img
+                  src={answer.imageUrl}
+                  alt="Imavge"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </Box>
+            )}
             <Divider />
             <Box
               sx={{
@@ -212,7 +238,7 @@ function UserAnswers({ answers }) {
                         }}
                         variant={"h5"}
                       >
-                        Your Answer...
+                        
                       </Typography>
                       <Typography
                         sx={{

@@ -78,7 +78,7 @@ const Dashboard = () => {
         <Box width={"16vw"} bgcolor={"white"}>
           <TextField
             color={"secondary"}
-            label="Choose Category"
+            label="Select hashtag"
             select
             fullWidth
             value={category}

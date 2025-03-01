@@ -20,6 +20,7 @@ import axios from "axios";
 const Profile = () => {
   const [section, setSection] = useState("profile");
   const [questions, setQuestions] = useState([]);
+  const [images, setImages] = useState([])
   const [answers, setAnswers] = useState([]);
   const user = useSelector((state) => state.user.user);
 
@@ -94,13 +95,13 @@ const Profile = () => {
                   <ListItemIcon>
                     <Person />
                   </ListItemIcon>
-                  <ListItemText primary="My Questions" />
+                  <ListItemText primary="My Posts" />
                 </ListItem>
                 <ListItem button onClick={handleMyAnswersClick}>
                   <ListItemIcon>
                     <QuestionAnswer />
                   </ListItemIcon>
-                  <ListItemText primary="My Answers" />
+                  <ListItemText primary="My Comments" />
                 </ListItem>
                 <ListItem button onClick={handleMyProfileClick}>
                   <ListItemIcon>

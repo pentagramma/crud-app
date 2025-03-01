@@ -137,7 +137,7 @@ const Navbar = ({ page, setSearchCheck, setSearchResultCheck }) => {
           <DynamicFormIcon />
         </IconButton>
         <Typography variant="h6" component="div" width={"10vw"}>
-          Q&AI
+        PhotoGram
         </Typography>
         {page && (
           <Box
@@ -173,16 +173,7 @@ const Navbar = ({ page, setSearchCheck, setSearchResultCheck }) => {
               setIsModalOpen(true);
             }}
           >
-            Post a Question
-          </Button>
-          <Button
-            color="inherit"
-            onClick={() => {
-              setIsDrawerOpen(true);
-              setResetAI(true);
-            }}
-          >
-            Talk to AI
+            Post Something?
           </Button>
           <Tooltip title="Account settings">
             <IconButton

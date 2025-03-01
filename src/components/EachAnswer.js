@@ -9,6 +9,7 @@ import axios from "axios";
 import { base_url } from "../utils/base_url";
 import UserPopover from "../components/UserPopover";
 import Cookies from "js-cookie";
+import { format, parseISO, isValid } from 'date-fns';
 
 const EachAnswer = ({ each, questionData }) => {
   const user = useSelector((state) => state.user.user);
@@ -29,6 +30,25 @@ const EachAnswer = ({ each, questionData }) => {
       setCheckLike(false);
     }
   }, []);
+
+  const formatTime = (timestamp) => {
+    if (!timestamp) {
+      console.error('Invalid timestamp:', timestamp);
+      return 'Invalid Date';
+    }
+  
+    try {
+      const date = parseISO(timestamp);
+      if (!isValid(date)) {
+        console.error('Invalid date after parsing:', timestamp);
+        return 'Invalid Date';
+      }
+      return format(date, 'hh:mm a');
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid Date';
+    }
+  };
 
   const handleLikeAnswer = async () => {
     const response = await axios.post(
@@ -81,6 +101,11 @@ const EachAnswer = ({ each, questionData }) => {
       return 0;
     }
   };
+
+useEffect(() => {
+  console.log(each.timestamp)
+  console.log("each.timestamp")
+},[each.timestamp])
 
   return (
     <Box
@@ -214,7 +239,7 @@ const EachAnswer = ({ each, questionData }) => {
               fontSize: "12px",
             }}
           >
-            {each.timestamp}
+            {formatTime(each.timestamp)}
           </Typography>
         </Box>
       </Box>

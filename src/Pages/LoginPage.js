@@ -100,7 +100,7 @@ const LoginPage = () => {
         }}
       >
         <Typography variant="h5" fontWeight={"600"} color={"secondary"}>
-          Q&AI
+        PhotoGram
         </Typography>
         <Typography>Introducing AI to your community</Typography>
       </Box>
